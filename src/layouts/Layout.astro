@@ -1,0 +1,80 @@
+---
+import '../styles/global.css';
+
+const { title = "YT-UNCLOGGED" } = Astro.props;
+---
+
+<!doctype html>
+<html lang="es" class="dark">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>{title}</title>
+		
+		<link href="https://fonts.googleapis.com/css2?family=Anybody:ital,wght@0,400..800;1,400..800&family=Hanken+Grotesk:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet" />
+		<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+		
+		<style is:global>
+			.manga-halftone {
+				background-image: radial-gradient(circle, #252525 2px, transparent 2px);
+				background-size: 8px 8px;
+				opacity: 0.15;
+			}
+			.kinetic-lines {
+				background: repeating-linear-gradient(
+					45deg,
+					transparent,
+					transparent 10px,
+					#1a1a1a 10px,
+					#1a1a1a 12px
+				);
+			}
+			.kinetic-hover:hover {
+				transform: translate(4px, -4px);
+				box-shadow: -4px 4px 0px 0px #c3f400;
+			}
+			.neo-card {
+				border: 1px solid #252525;
+				transition: all 0.2s ease-in-out;
+			}
+			.neo-card:hover {
+				border-color: #c3f400;
+			}
+			.neo-card:hover .manga-halftone-card {
+				opacity: 0.05;
+			}
+			.radio-custom:checked + label {
+				border-color: #c3f400;
+				color: #c3f400;
+			}
+			@keyframes move-stripes {
+				0% { background-position: 0 0; }
+				100% { background-position: 40px 0; }
+			}
+			.indeterminate-bar {
+				background-image: linear-gradient(
+					45deg,
+					#c3f400 25%,
+					#abd600 25%,
+					#abd600 50%,
+					#c3f400 50%,
+					#c3f400 75%,
+					#abd600 75%,
+					#abd600
+				);
+				background-size: 40px 40px;
+				animation: move-stripes 1.2s linear infinite;
+			}
+		</style>
+	</head>
+	<body class="bg-background text-on-background min-h-screen flex flex-col relative overflow-x-hidden selection:bg-primary-fixed selection:text-on-primary-fixed">
+		<!-- Deep Texture Background -->
+		<div class="fixed inset-0 z-[-1] pointer-events-none">
+			<div class="absolute inset-0 manga-halftone"></div>
+			<div class="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] kinetic-lines rounded-full blur-[100px] opacity-20 transform rotate-12"></div>
+			<div class="absolute bottom-[-20%] left-[-10%] w-[60%] h-[60%] kinetic-lines rounded-full blur-[120px] opacity-20 transform -rotate-12"></div>
+		</div>
+
+		<slot />
+	</body>
+</html>

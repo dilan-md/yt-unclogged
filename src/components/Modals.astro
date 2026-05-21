@@ -1,0 +1,230 @@
+---
+// Modals and Toasts
+---
+<!-- Settings Modal -->
+<div id="settings-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/90 backdrop-blur-sm hidden transition-all duration-300 opacity-0 pointer-events-none">
+    <div class="bg-surface border-2 border-primary-fixed p-8 w-full max-w-md relative overflow-hidden neo-card transform scale-95 transition-all duration-300">
+        <div class="absolute inset-0 manga-halftone pointer-events-none opacity-5"></div>
+        <div class="relative z-10 flex flex-col gap-6">
+            <div class="flex justify-between items-center border-b border-surface-container-highest pb-4">
+                <h3 class="font-display-lg text-headline-md text-primary uppercase italic">AJUSTES</h3>
+                <button id="close-settings" class="text-secondary hover:text-primary-fixed transition-colors flex items-center justify-center">
+                    <span class="material-symbols-outlined font-headline-md">close</span>
+                </button>
+            </div>
+            
+            <div class="flex flex-col gap-2">
+                <label for="settings-api-url" class="font-label-bold text-label-bold text-secondary uppercase tracking-wider">Instancia API</label>
+                <input id="settings-api-url" type="text" class="w-full bg-surface-container border border-surface-container-highest text-primary p-3 focus:border-primary-fixed focus:ring-0 focus:outline-none" placeholder="(Por defecto - Automático)">
+                <span class="text-[11px] text-secondary/60">Servidor open-source para descargas. Déjalo en blanco para auto-selección.</span>
+            </div>
+
+            <!-- Sugerencias de servidores -->
+            <div class="flex flex-col gap-2">
+                <div class="flex justify-between items-center">
+                    <label class="font-label-bold text-label-bold text-secondary uppercase tracking-wider">Instancias Activas</label>
+                    <button type="button" id="refresh-instances-btn" onclick="refreshInstanceList()" class="text-[10px] font-label-bold text-primary-fixed hover:text-white transition-colors flex items-center gap-1">
+                        <span class="material-symbols-outlined text-[14px]">refresh</span> Actualizar
+                    </button>
+                </div>
+                <div id="instance-suggestions" class="grid grid-cols-2 gap-2 max-h-[160px] overflow-y-auto pr-1">
+                    <button type="button" onclick="setInstanceUrl('https://cobaltapi.kittycat.boo')" class="text-[11px] font-label-bold bg-surface-container hover:bg-primary-fixed hover:text-on-primary-fixed transition-colors border border-surface-container-highest py-2 px-3 text-left truncate">
+                        🐱 KittyCat
+                    </button>
+                    <button type="button" onclick="setInstanceUrl('https://api.cobalt.blackcat.sweeux.org')" class="text-[11px] font-label-bold bg-surface-container hover:bg-primary-fixed hover:text-on-primary-fixed transition-colors border border-surface-container-highest py-2 px-3 text-left truncate">
+                        🐈 Blackcat
+                    </button>
+                    <button type="button" onclick="setInstanceUrl('https://cobaltapi.squair.xyz')" class="text-[11px] font-label-bold bg-surface-container hover:bg-primary-fixed hover:text-on-primary-fixed transition-colors border border-surface-container-highest py-2 px-3 text-left truncate">
+                        💎 Squair
+                    </button>
+                    <button type="button" onclick="setInstanceUrl('https://cobalt.meowing.de')" class="text-[11px] font-label-bold bg-surface-container hover:bg-primary-fixed hover:text-on-primary-fixed transition-colors border border-surface-container-highest py-2 px-3 text-left truncate">
+                        🐾 Meowing
+                    </button>
+                    <button type="button" onclick="setInstanceUrl('https://cobalt.natsumi.lol')" class="text-[11px] font-label-bold bg-surface-container hover:bg-primary-fixed hover:text-on-primary-fixed transition-colors border border-surface-container-highest py-2 px-3 text-left truncate">
+                        🌸 Natsumi
+                    </button>
+                    <button type="button" onclick="setInstanceUrl('https://cobalt.dood.lol')" class="text-[11px] font-label-bold bg-surface-container hover:bg-primary-fixed hover:text-on-primary-fixed transition-colors border border-surface-container-highest py-2 px-3 text-left truncate">
+                        💀 Dood
+                    </button>
+                    <button type="button" onclick="setInstanceUrl('https://cobalt.calvindev.me')" class="text-[11px] font-label-bold bg-surface-container hover:bg-primary-fixed hover:text-on-primary-fixed transition-colors border border-surface-container-highest py-2 px-3 text-left truncate">
+                        👨‍💻 CalvinDev
+                    </button>
+                    <button type="button" onclick="setInstanceUrl('https://cobalt.esk0r1.dev')" class="text-[11px] font-label-bold bg-surface-container hover:bg-primary-fixed hover:text-on-primary-fixed transition-colors border border-surface-container-highest py-2 px-3 text-left truncate">
+                        🦊 EskoR1
+                    </button>
+                    <button type="button" onclick="setInstanceUrl('https://cobalt.mrcyjanek.net')" class="text-[11px] font-label-bold bg-surface-container hover:bg-primary-fixed hover:text-on-primary-fixed transition-colors border border-surface-container-highest py-2 px-3 text-left truncate">
+                        🚀 MrCyjanek
+                    </button>
+                    <button type="button" onclick="setInstanceUrl('https://cobalt.csthub.cc')" class="text-[11px] font-label-bold bg-surface-container hover:bg-primary-fixed hover:text-on-primary-fixed transition-colors border border-surface-container-highest py-2 px-3 text-left truncate">
+                        🌐 CSTHub
+                    </button>
+                    <button type="button" onclick="setInstanceUrl('https://api.cobalt.tools')" class="text-[11px] font-label-bold bg-surface-container hover:bg-primary-fixed hover:text-on-primary-fixed transition-colors border border-surface-container-highest py-2 px-3 text-left truncate">
+                        ⚙️ Oficial
+                    </button>
+                    <button type="button" onclick="setInstanceUrl('https://co.wuk.sh')" class="text-[11px] font-label-bold bg-surface-container hover:bg-primary-fixed hover:text-on-primary-fixed transition-colors border border-surface-container-highest py-2 px-3 text-left truncate">
+                        🦖 Wuk
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-2">
+                <label for="settings-api-key" class="font-label-bold text-label-bold text-secondary uppercase tracking-wider">API Key (Opcional)</label>
+                <input id="settings-api-key" type="password" class="w-full bg-surface-container border border-surface-container-highest text-primary p-3 focus:border-primary-fixed focus:ring-0 focus:outline-none" placeholder="Ingresa API Key si tu servidor lo requiere">
+            </div>
+
+            <div class="flex items-center justify-between bg-surface-container p-3 border border-surface-container-highest">
+                <div class="flex flex-col">
+                    <label for="settings-combine-ffmpeg" class="font-label-bold text-label-bold text-primary uppercase tracking-wider">Combinar con FFmpeg</label>
+                    <span class="text-[11px] text-secondary/60">Combina audio y video en el cliente (Requiere ~10MB adicionales).</span>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="settings-combine-ffmpeg" class="sr-only peer">
+                    <div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-fixed"></div>
+                </label>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div class="flex flex-col gap-2">
+                    <label for="settings-filename-style" class="font-label-bold text-label-bold text-secondary uppercase tracking-wider">Nombres de Archivo</label>
+                    <select id="settings-filename-style" class="w-full bg-surface-container border border-surface-container-highest text-primary p-3 focus:border-primary-fixed focus:ring-0 focus:outline-none">
+                        <option value="basic">Básico</option>
+                        <option value="pretty">Bonito</option>
+                        <option value="classic">Clásico</option>
+                        <option value="nerdy">Detallado</option>
+                    </select>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <label for="settings-audio-bitrate" class="font-label-bold text-label-bold text-secondary uppercase tracking-wider">Calidad de Audio</label>
+                    <select id="settings-audio-bitrate" class="w-full bg-surface-container border border-surface-container-highest text-primary p-3 focus:border-primary-fixed focus:ring-0 focus:outline-none">
+                        <option value="320">320 kbps (Alta)</option>
+                        <option value="256">256 kbps</option>
+                        <option value="128" selected>128 kbps</option>
+                        <option value="64">64 kbps (Baja)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-4 mt-4 border-t border-surface-container-highest pt-4">
+                <button id="reset-settings" class="px-4 py-2 border border-surface-container-highest text-secondary hover:text-primary hover:border-secondary transition-colors uppercase font-label-bold text-label-bold">Reestablecer</button>
+                <button id="save-settings" class="px-6 py-2 bg-primary-fixed text-on-primary-fixed hover:bg-surface-tint transition-colors uppercase font-label-bold text-label-bold">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- History Modal -->
+<div id="history-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/90 backdrop-blur-sm hidden transition-all duration-300 opacity-0 pointer-events-none">
+    <div class="bg-surface border-2 border-primary-fixed p-8 w-full max-w-lg relative overflow-hidden neo-card transform scale-95 transition-all duration-300">
+        <div class="absolute inset-0 manga-halftone pointer-events-none opacity-5"></div>
+        <div class="relative z-10 flex flex-col gap-6">
+            <div class="flex justify-between items-center border-b border-surface-container-highest pb-4">
+                <h3 class="font-display-lg text-headline-md text-primary uppercase italic">HISTORIAL</h3>
+                <button id="close-history" class="text-secondary hover:text-primary-fixed transition-colors flex items-center justify-center">
+                    <span class="material-symbols-outlined font-headline-md">close</span>
+                </button>
+            </div>
+            
+            <div id="history-list" class="max-h-[300px] overflow-y-auto flex flex-col gap-4 pr-2 select-text">
+                <div class="text-center py-8 text-secondary font-body-md">El historial está vacío. ¡Empieza a liberar contenido!</div>
+            </div>
+
+            <div class="flex justify-between items-center mt-4 border-t border-surface-container-highest pt-4">
+                <button id="clear-history" class="px-4 py-2 border border-error/50 text-error hover:border-error hover:bg-error/10 transition-colors uppercase font-label-bold text-label-bold">Limpiar</button>
+                <button id="close-history-btn" class="px-6 py-2 bg-primary-fixed text-on-primary-fixed hover:bg-surface-tint transition-colors uppercase font-label-bold text-label-bold">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- DMCA Modal -->
+<div id="dmca-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/90 backdrop-blur-sm hidden transition-all duration-300 opacity-0 pointer-events-none">
+    <div class="bg-surface border-2 border-primary-fixed p-8 w-full max-w-lg relative overflow-hidden neo-card transform scale-95 transition-all duration-300">
+        <div class="absolute inset-0 manga-halftone pointer-events-none opacity-5"></div>
+        <div class="relative z-10 flex flex-col gap-6">
+            <div class="flex justify-between items-center border-b border-surface-container-highest pb-4">
+                <h3 class="font-display-lg text-headline-md text-primary uppercase italic">DMCA & Legal</h3>
+                <button id="close-dmca" class="text-secondary hover:text-primary-fixed transition-colors flex items-center justify-center">
+                    <span class="material-symbols-outlined font-headline-md">close</span>
+                </button>
+            </div>
+            
+            <div class="max-h-[400px] overflow-y-auto flex flex-col gap-4 pr-2 select-text font-body-md text-secondary">
+                <p><strong>YT-UNCLOGGED</strong> es estrictamente una interfaz del lado del cliente que utiliza APIs externas de terceros (como instancias públicas de Cobalt) para procesar las solicitudes.</p>
+                <p>No alojamos, almacenamos, guardamos en caché ni distribuimos ningún material con derechos de autor en nuestros servidores. Todo el procesamiento y descarga de medios ocurre directamente entre el navegador del usuario y el servidor API de terceros seleccionado.</p>
+                <p>Debido a que no tenemos control sobre el contenido transmitido a través de estas APIs externas, no asumimos ninguna responsabilidad legal por las descargas o el uso de los medios. Cualquier aviso de eliminación DMCA o reclamo de derechos de autor debe dirigirse a los operadores de las instancias API respectivas o a los anfitriones originales del contenido.</p>
+                <p>Al utilizar este servicio, aceptas asumir toda la responsabilidad por los medios que descargas y asegurar que tienes los derechos o permisos para hacerlo bajo las leyes aplicables de uso justo.</p>
+            </div>
+
+            <div class="flex justify-end items-center mt-4 border-t border-surface-container-highest pt-4">
+                <button id="close-dmca-btn" class="px-6 py-2 bg-primary-fixed text-on-primary-fixed hover:bg-surface-tint transition-colors uppercase font-label-bold text-label-bold">Entendido</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Privacy Modal -->
+<div id="privacy-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/90 backdrop-blur-sm hidden transition-all duration-300 opacity-0 pointer-events-none">
+    <div class="bg-surface border-2 border-primary-fixed p-8 w-full max-w-lg relative overflow-hidden neo-card transform scale-95 transition-all duration-300">
+        <div class="absolute inset-0 manga-halftone pointer-events-none opacity-5"></div>
+        <div class="relative z-10 flex flex-col gap-6">
+            <div class="flex justify-between items-center border-b border-surface-container-highest pb-4">
+                <h3 class="font-display-lg text-headline-md text-primary uppercase italic">Privacidad</h3>
+                <button id="close-privacy" class="text-secondary hover:text-primary-fixed transition-colors flex items-center justify-center">
+                    <span class="material-symbols-outlined font-headline-md">close</span>
+                </button>
+            </div>
+            
+            <div class="max-h-[400px] overflow-y-auto flex flex-col gap-4 pr-2 select-text font-body-md text-secondary">
+                <p><strong>YT-UNCLOGGED</strong> prioriza tu privacidad por encima de todo.</p>
+                <p><strong>Sin Rastreo:</strong> No utilizamos cookies, analíticas ni rastreadores de ningún tipo. Tu actividad en este sitio es completamente privada.</p>
+                <p><strong>Almacenamiento Local:</strong> Tus ajustes y el historial de descargas se guardan exclusivamente en el LocalStorage de tu navegador. Estos datos nunca salen de tu dispositivo ni se transmiten a nosotros.</p>
+                <p><strong>Procesamiento de Datos:</strong> Cualquier URL que ingreses se envía directamente a la instancia API de Cobalt seleccionada. No interceptamos, registramos ni monitoreamos tus solicitudes. Por favor, revisa la política de privacidad de la instancia API que elijas usar para conocer sus prácticas de manejo de datos.</p>
+            </div>
+
+            <div class="flex justify-end items-center mt-4 border-t border-surface-container-highest pt-4">
+                <button id="close-privacy-btn" class="px-6 py-2 bg-primary-fixed text-on-primary-fixed hover:bg-surface-tint transition-colors uppercase font-label-bold text-label-bold">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Terms Modal -->
+<div id="terms-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/90 backdrop-blur-sm hidden transition-all duration-300 opacity-0 pointer-events-none">
+    <div class="bg-surface border-2 border-primary-fixed p-8 w-full max-w-lg relative overflow-hidden neo-card transform scale-95 transition-all duration-300">
+        <div class="absolute inset-0 manga-halftone pointer-events-none opacity-5"></div>
+        <div class="relative z-10 flex flex-col gap-6">
+            <div class="flex justify-between items-center border-b border-surface-container-highest pb-4">
+                <h3 class="font-display-lg text-headline-md text-primary uppercase italic">Términos</h3>
+                <button id="close-terms" class="text-secondary hover:text-primary-fixed transition-colors flex items-center justify-center">
+                    <span class="material-symbols-outlined font-headline-md">close</span>
+                </button>
+            </div>
+            
+            <div class="max-h-[400px] overflow-y-auto flex flex-col gap-4 pr-2 select-text font-body-md text-secondary">
+                <p>Al utilizar <strong>YT-UNCLOGGED</strong>, aceptas los siguientes términos:</p>
+                <p><strong>1. Uso Personal:</strong> Esta herramienta está diseñada para uso personal y no comercial, como el archivo de medios, el uso justo o la visualización sin conexión de contenido al que tienes derecho de acceso.</p>
+                <p><strong>2. Sin Abuso:</strong> No utilices esta herramienta para automatizar descargas masivas o sobrecargar las instancias API públicas proporcionadas por la comunidad.</p>
+                <p><strong>3. Servicio "Tal Cual":</strong> El servicio se proporciona "tal cual" sin garantías de ningún tipo. No garantizamos el tiempo de actividad ni la fiabilidad de las APIs externas.</p>
+                <p><strong>4. Cumplimiento:</strong> Aceptas cumplir con todas las leyes de derechos de autor locales e internacionales aplicables al utilizar esta herramienta.</p>
+            </div>
+
+            <div class="flex justify-end items-center mt-4 border-t border-surface-container-highest pt-4">
+                <button id="close-terms-btn" class="px-6 py-2 bg-primary-fixed text-on-primary-fixed hover:bg-surface-tint transition-colors uppercase font-label-bold text-label-bold">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Status Alert Toast (Neo-brutalist Banner) -->
+<div id="status-toast" class="fixed top-8 left-1/2 transform -translate-x-1/2 z-[200] max-w-md w-full px-4 transition-all duration-300 opacity-0 translate-y-[-20px] pointer-events-none">
+    <div id="status-toast-card" class="bg-surface border-2 border-primary-fixed p-4 shadow-[-4px_4px_0px_0px_#c3f400] flex items-start gap-4">
+        <span id="status-toast-icon" class="material-symbols-outlined text-primary-fixed">info</span>
+        <div class="flex-grow select-text">
+            <h4 id="status-toast-title" class="font-label-bold text-label-bold uppercase text-primary tracking-wider">Estado</h4>
+            <p id="status-toast-message" class="font-body-md text-[13px] text-secondary mt-1"></p>
+        </div>
+        <button id="close-toast" class="text-secondary hover:text-primary flex items-center justify-center mt-0.5">
+            <span class="material-symbols-outlined text-[18px]">close</span>
+        </button>
+    </div>
+</div>

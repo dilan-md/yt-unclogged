@@ -1,0 +1,1472 @@
+<!DOCTYPE html><html class="dark" lang="es"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>YT-UNCLOGGED</title>
+<link href="https://fonts.googleapis.com/css2?family=Anybody:ital,wght@0,400..800;1,400..800&amp;family=Hanken+Grotesk:ital,wght@0,400..700;1,400..700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "secondary": "#c8c6c5",
+                        "surface": "#131313",
+                        "primary": "#ffffff",
+                        "primary-container": "#c3f400",
+                        "surface-tint": "#abd600",
+                        "tertiary-fixed": "#e5e2e1",
+                        "surface-container-highest": "#353534",
+                        "surface-container": "#201f1f",
+                        "surface-variant": "#353534",
+                        "outline": "#8e9379",
+                        "surface-dim": "#131313",
+                        "secondary-fixed-dim": "#c8c6c5",
+                        "tertiary": "#ffffff",
+                        "on-surface": "#e5e2e1",
+                        "surface-container-low": "#1c1b1b",
+                        "on-tertiary-container": "#656464",
+                        "on-primary-container": "#556d00",
+                        "secondary-container": "#4a4949",
+                        "tertiary-container": "#e5e2e1",
+                        "inverse-primary": "#506600",
+                        "surface-container-lowest": "#0e0e0e",
+                        "on-secondary": "#313030",
+                        "on-tertiary-fixed": "#1c1b1b",
+                        "outline-variant": "#444933",
+                        "inverse-surface": "#e5e2e1",
+                        "on-error": "#690005",
+                        "secondary-fixed": "#e5e2e1",
+                        "on-background": "#e5e2e1",
+                        "background": "#131313",
+                        "on-error-container": "#ffdad6",
+                        "on-secondary-container": "#bab8b7",
+                        "on-primary": "#283500",
+                        "tertiary-fixed-dim": "#c8c6c5",
+                        "error": "#ffb4ab",
+                        "primary-fixed-dim": "#abd600",
+                        "inverse-on-surface": "#313030",
+                        "surface-bright": "#3a3939",
+                        "primary-fixed": "#c3f400",
+                        "on-tertiary-fixed-variant": "#474746",
+                        "on-secondary-fixed": "#1c1b1b",
+                        "on-primary-fixed": "#161e00",
+                        "on-primary-fixed-variant": "#3c4d00",
+                        "error-container": "#93000a",
+                        "on-secondary-fixed-variant": "#474646",
+                        "surface-container-high": "#2a2a2a",
+                        "on-surface-variant": "#c4c9ac",
+                        "on-tertiary": "#313030"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    spacing: {
+                        "unit": "4px",
+                        "section-gap": "120px",
+                        "gutter": "24px",
+                        "margin-mobile": "20px",
+                        "margin-desktop": "64px"
+                    },
+                    fontFamily: {
+                        "headline-lg": ["Anybody"],
+                        "display-xl": ["Anybody"],
+                        "display-lg": ["Anybody"],
+                        "body-md": ["Hanken Grotesk"],
+                        "label-bold": ["Hanken Grotesk"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "headline-md": ["Anybody"],
+                        "label-sm": ["Hanken Grotesk"],
+                        "headline-lg-mobile": ["Anybody"]
+                    },
+                    fontSize: {
+                        "headline-lg": ["40px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "display-xl": ["96px", { "lineHeight": "90px", "letterSpacing": "-0.04em", "fontWeight": "800" }],
+                        "display-lg": ["64px", { "lineHeight": "60px", "letterSpacing": "-0.03em", "fontWeight": "800" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "letterSpacing": "0.01em", "fontWeight": "400" }],
+                        "label-bold": ["12px", { "lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "letterSpacing": "0.01em", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "28px", "letterSpacing": "0em", "fontWeight": "700" }],
+                        "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "headline-lg-mobile": ["32px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .manga-halftone {
+            background-image: radial-gradient(circle, #252525 2px, transparent 2px);
+            background-size: 8px 8px;
+            opacity: 0.15;
+        }
+        .kinetic-lines {
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                #1a1a1a 10px,
+                #1a1a1a 12px
+            );
+        }
+        .kinetic-hover:hover {
+            transform: translate(4px, -4px);
+            box-shadow: -4px 4px 0px 0px #c3f400;
+        }
+        .neo-card {
+            border: 1px solid #252525;
+            transition: all 0.2s ease-in-out;
+        }
+        .neo-card:hover {
+            border-color: #c3f400;
+        }
+        .neo-card:hover .manga-halftone-card {
+            opacity: 0.05;
+        }
+        .radio-custom:checked + label {
+            border-color: #c3f400;
+            color: #c3f400;
+        }
+        @keyframes move-stripes {
+            0% { background-position: 0 0; }
+            100% { background-position: 40px 0; }
+        }
+        .indeterminate-bar {
+            background-image: linear-gradient(
+                45deg,
+                #c3f400 25%,
+                #abd600 25%,
+                #abd600 50%,
+                #c3f400 50%,
+                #c3f400 75%,
+                #abd600 75%,
+                #abd600
+            );
+            background-size: 40px 40px;
+            animation: move-stripes 1.2s linear infinite;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col relative overflow-x-hidden selection:bg-primary-fixed selection:text-on-primary-fixed">
+<!-- Deep Texture Background -->
+<div class="fixed inset-0 z-[-1] pointer-events-none">
+<div class="absolute inset-0 manga-halftone"></div>
+<div class="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] kinetic-lines rounded-full blur-[100px] opacity-20 transform rotate-12"></div>
+<div class="absolute bottom-[-20%] left-[-10%] w-[60%] h-[60%] kinetic-lines rounded-full blur-[120px] opacity-20 transform -rotate-12"></div>
+</div>
+<!-- TopAppBar -->
+<header class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 bg-transparent flat no shadows docked full-width top-0 z-50">
+<div class="font-display-lg text-display-lg font-extrabold italic tracking-tighter text-primary-fixed uppercase select-none">
+            YT-UNCLOGGED
+        </div>
+<div class="flex items-center gap-6">
+<button id="open-settings" aria-label="settings" class="text-secondary hover:text-primary transition-colors hover:scale-105 transition-transform duration-200 focus:outline-none">
+<span class="material-symbols-outlined font-headline-md text-headline-md" style="font-variation-settings: 'FILL' 0;">settings</span>
+</button>
+<button id="open-history" aria-label="history" class="text-secondary hover:text-primary transition-colors hover:scale-105 transition-transform duration-200 focus:outline-none">
+<span class="material-symbols-outlined font-headline-md text-headline-md" style="font-variation-settings: 'FILL' 0;">history</span>
+</button>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="flex-grow flex flex-col items-center justify-center px-margin-mobile md:px-margin-desktop w-full max-w-7xl mx-auto py-section-gap relative z-10">
+<!-- Hero Section -->
+<div class="w-full text-center mb-16 relative">
+<h1 class="font-display-xl text-display-xl text-primary uppercase italic tracking-tighter relative inline-block z-10 break-words w-full">
+                PEGA EL LINK.<br>
+<span class="text-primary-fixed relative">
+                    LIBERA EL CONTENIDO.
+                    <div class="absolute inset-0 kinetic-lines z-[-1] opacity-30 transform -skew-x-12 translate-x-4 translate-y-2"></div>
+</span>
+</h1>
+</div>
+<!-- Interactive Core Area -->
+<div class="w-full max-w-4xl flex flex-col gap-12 relative z-20">
+<!-- URL Input Container -->
+<div class="relative group w-full">
+<div class="absolute -top-6 left-0 font-label-bold text-label-bold uppercase text-primary-fixed opacity-0 group-focus-within:opacity-100 transition-opacity duration-200 tracking-widest">
+                    Objetivo Detectado
+                </div>
+<div class="relative flex items-center bg-surface-container border-b-2 border-surface-container-highest focus-within:border-primary-fixed transition-colors duration-300">
+<span class="material-symbols-outlined absolute left-4 text-secondary group-focus-within:text-primary-fixed transition-colors duration-300" style="font-variation-settings: 'FILL' 0;">search</span>
+<input id="url-input" autocomplete="off" class="w-full bg-transparent border-none font-headline-md text-headline-md text-primary placeholder:text-surface-variant py-6 pl-14 pr-6 focus:ring-0 focus:outline-none" placeholder="PEGAR URL..." type="text">
+</div>
+</div>
+
+<!-- Video Preview Panel -->
+<div id="video-preview-card" class="w-full bg-surface border-2 border-surface-container-highest p-6 relative overflow-hidden transition-all duration-300 hidden flex-col md:flex-row gap-6 items-center shadow-[-4px_4px_0px_0px_#201f1f]">
+    <div class="absolute inset-0 manga-halftone pointer-events-none opacity-5"></div>
+    <div class="relative w-full md:w-64 aspect-video bg-surface-container-low border border-surface-container-highest overflow-hidden flex-shrink-0 group">
+        <img id="preview-thumbnail" src="" alt="Portada" class="w-full h-full object-cover select-none">
+        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-end p-2">
+            <span class="text-[9px] font-label-bold uppercase text-primary-fixed">Vista Previa</span>
+        </div>
+    </div>
+    <div class="flex-grow w-full flex flex-col justify-center text-left">
+        <div class="flex items-center gap-2 mb-2">
+            <span id="preview-platform" class="px-2 py-0.5 text-[9px] font-label-bold uppercase bg-primary-fixed text-on-primary-fixed border border-transparent">YOUTUBE</span>
+            <span id="preview-author" class="text-[11px] font-label-bold uppercase text-secondary tracking-widest truncate max-w-[200px]">Canal</span>
+        </div>
+        <h3 id="preview-title" class="font-headline-md text-[18px] md:text-[22px] leading-tight text-primary uppercase italic tracking-tight break-words select-text">Título del Video</h3>
+        <div class="mt-4 flex items-center gap-2 text-[11px] text-secondary/60">
+            <span class="material-symbols-outlined text-[14px]">link</span>
+            <span id="preview-domain" class="truncate max-w-[300px]">youtube.com</span>
+        </div>
+    </div>
+</div>
+
+<!-- Options Grid (Asymmetric) -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter items-start">
+<!-- FORMATO Block -->
+<div class="md:col-span-5 bg-surface neo-card p-8 relative overflow-hidden group">
+<div class="absolute inset-0 manga-halftone manga-halftone-card opacity-0 transition-opacity duration-300 pointer-events-none"></div>
+<h2 class="font-label-bold text-label-bold text-secondary uppercase tracking-widest mb-6">FORMATO</h2>
+<div class="flex flex-col gap-4">
+<div class="relative">
+<input checked="" class="sr-only radio-custom" id="format-mp4" name="format" type="radio" value="mp4">
+<label class="flex items-center justify-between p-4 border border-surface-container-highest cursor-pointer font-headline-md text-headline-md text-primary hover:bg-surface-container-high transition-colors relative overflow-hidden" for="format-mp4">
+<span class="">MP4</span>
+<span class="material-symbols-outlined text-surface-variant group-hover:text-secondary transition-colors" style="font-variation-settings: 'FILL' 0;">movie</span>
+</label>
+</div>
+<div class="relative">
+<input class="sr-only radio-custom" id="format-mp3" name="format" type="radio" value="mp3">
+<label class="flex items-center justify-between p-4 border border-surface-container-highest cursor-pointer font-headline-md text-headline-md text-primary hover:bg-surface-container-high transition-colors relative overflow-hidden" for="format-mp3">
+<span class="">MP3</span>
+<span class="material-symbols-outlined text-surface-variant group-hover:text-secondary transition-colors" style="font-variation-settings: 'FILL' 0;">audio_file</span>
+</label>
+</div>
+</div>
+</div>
+<!-- CALIDAD Block -->
+<div class="md:col-span-7 bg-surface neo-card p-8 relative overflow-hidden group md:translate-y-4">
+<div class="absolute inset-0 manga-halftone manga-halftone-card opacity-0 transition-opacity duration-300 pointer-events-none"></div>
+<h2 class="font-label-bold text-label-bold text-secondary uppercase tracking-widest mb-6">CALIDAD</h2>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+<div class="relative">
+<input class="sr-only radio-custom" id="quality-720" name="quality" type="radio" value="720">
+<label class="flex flex-col items-center justify-center p-6 border border-surface-container-highest cursor-pointer hover:bg-surface-container-high transition-colors relative overflow-hidden gap-2" for="quality-720">
+<span class="font-headline-md text-headline-md text-primary">720p</span>
+<span class="font-label-sm text-label-sm text-secondary uppercase">Estándar</span>
+</label>
+</div>
+<div class="relative">
+<input checked="" class="sr-only radio-custom" id="quality-1080" name="quality" type="radio" value="1080">
+<label class="flex flex-col items-center justify-center p-6 border border-surface-container-highest cursor-pointer hover:bg-surface-container-high transition-colors relative overflow-hidden gap-2" for="quality-1080">
+<span class="font-headline-md text-headline-md text-primary">1080p</span>
+<span class="font-label-sm text-label-sm text-secondary uppercase">HD</span>
+</label>
+</div>
+<div class="relative">
+<input class="sr-only radio-custom" id="quality-4k" name="quality" type="radio" value="2160">
+<label class="flex flex-col items-center justify-center p-6 border border-surface-container-highest cursor-pointer hover:bg-surface-container-high transition-colors relative overflow-hidden gap-2" for="quality-4k">
+<span class="font-headline-md text-headline-md text-primary">4K PRO</span>
+<span class="font-label-sm text-label-sm text-primary-fixed uppercase">Máxima</span>
+</label>
+</div>
+</div>
+</div>
+</div>
+<!-- Download Progress Panel (Neo-brutalist) -->
+<div id="download-progress-card" class="bg-surface border-2 border-primary-fixed p-6 relative overflow-hidden transition-all duration-300 hidden flex-col gap-4 shadow-[-4px_4px_0px_0px_#c3f400] w-full">
+    <div class="absolute inset-0 manga-halftone pointer-events-none opacity-5"></div>
+    <div class="flex justify-between items-center select-none">
+        <div class="flex items-center gap-2">
+            <span class="inline-block w-2.5 h-2.5 bg-primary-fixed rounded-full animate-ping"></span>
+            <span id="progress-status" class="font-label-bold text-label-bold uppercase text-primary-fixed tracking-wider">DESCARGANDO...</span>
+        </div>
+        <span id="progress-stats" class="font-label-bold text-[11px] text-secondary uppercase tracking-widest">0.0 MB / 0.0 MB</span>
+    </div>
+    
+    <!-- Outer progress bar track -->
+    <div class="w-full bg-surface-container border border-surface-container-highest h-6 relative overflow-hidden">
+        <!-- Inner progress bar fill -->
+        <div id="progress-bar-fill" class="h-full bg-primary-fixed transition-all duration-100 ease-out" style="width: 0%"></div>
+        <!-- Progress percentage overlay text -->
+        <div id="progress-percent" class="absolute inset-0 flex items-center justify-center font-label-bold text-[11px] text-white mix-blend-difference select-none">0%</div>
+    </div>
+    
+    <div class="flex justify-between items-center text-[10px] text-secondary/60">
+        <span id="progress-speed">Velocidad: -- MB/s</span>
+        <span id="progress-filename" class="truncate max-w-[250px] md:max-w-[400px]">Nombre del archivo...</span>
+    </div>
+</div>
+
+<!-- Action Button & Server Badge -->
+<div class="w-full flex flex-col md:flex-row items-center justify-between gap-4 mt-8 relative">
+    <div class="flex items-center gap-2 bg-surface border border-surface-container-highest px-4 py-2 select-none" id="server-badge-container">
+        <span class="inline-block w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse mr-1"></span>
+        <span class="font-label-sm text-[10px] text-secondary uppercase tracking-widest">Servidor Activo:</span>
+        <span id="active-server-name" class="font-label-bold text-[10px] text-primary-fixed uppercase tracking-wider">Grapefruit</span>
+    </div>
+    
+    <button id="unclog-btn" disabled class="w-full md:w-auto bg-surface-container-high text-secondary/40 font-headline-lg text-headline-lg italic uppercase px-12 py-6 flex items-center justify-center gap-4 kinetic-hover transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-surface-tint border border-transparent hover:border-on-primary-fixed opacity-40 cursor-not-allowed pointer-events-none">
+        <span id="unclog-btn-text">UNCLOG</span>
+        <span id="unclog-btn-icon" class="material-symbols-outlined font-display-lg text-display-lg" style="font-variation-settings: 'FILL' 1;">download</span>
+    </button>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="flex flex-col md:flex-row justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-6 gap-4 bg-surface-container-lowest border-t border-surface-container-highest flat no shadows full-width bottom-0 z-50">
+<div class="font-headline-md text-headline-md text-secondary">
+            © YT-UNCLOGGED. NO FILLER.
+        </div>
+<div class="flex gap-6">
+<a id="open-privacy" class="font-label-sm text-label-sm uppercase tracking-widest text-on-tertiary-container hover:text-primary-fixed transition-opacity duration-200 opacity-75 hover:opacity-100 cursor-pointer">Privacy</a>
+<a id="open-terms" class="font-label-sm text-label-sm uppercase tracking-widest text-on-tertiary-container hover:text-primary-fixed transition-opacity duration-200 opacity-75 hover:opacity-100 cursor-pointer">Terms</a>
+<a id="open-dmca" class="font-label-sm text-label-sm uppercase tracking-widest text-on-tertiary-container hover:text-primary-fixed transition-opacity duration-200 opacity-75 hover:opacity-100 cursor-pointer">DMCA</a>
+</div>
+</footer>
+<!-- Settings Modal -->
+<div id="settings-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/90 backdrop-blur-sm hidden transition-all duration-300 opacity-0 pointer-events-none">
+    <div class="bg-surface border-2 border-primary-fixed p-8 w-full max-w-md relative overflow-hidden neo-card transform scale-95 transition-all duration-300">
+        <div class="absolute inset-0 manga-halftone pointer-events-none opacity-5"></div>
+        <div class="relative z-10 flex flex-col gap-6">
+            <div class="flex justify-between items-center border-b border-surface-container-highest pb-4">
+                <h3 class="font-display-lg text-headline-md text-primary uppercase italic">AJUSTES</h3>
+                <button id="close-settings" class="text-secondary hover:text-primary-fixed transition-colors flex items-center justify-center">
+                    <span class="material-symbols-outlined font-headline-md">close</span>
+                </button>
+            </div>
+            
+            <div class="flex flex-col gap-2">
+                <label for="settings-api-url" class="font-label-bold text-label-bold text-secondary uppercase tracking-wider">Instancia API de Cobalt</label>
+                <input id="settings-api-url" type="text" class="w-full bg-surface-container border border-surface-container-highest text-primary p-3 focus:border-primary-fixed focus:ring-0 focus:outline-none" placeholder="https://grapefruit.clxxped.lol">
+                <span class="text-[11px] text-secondary/60">Servidor open-source para descargas. Puedes cambiarlo si falla.</span>
+            </div>
+
+            <!-- Sugerencias de servidores -->
+            <div class="flex flex-col gap-2">
+                <div class="flex justify-between items-center">
+                    <label class="font-label-bold text-label-bold text-secondary uppercase tracking-wider">Instancias Activas</label>
+                    <button type="button" id="refresh-instances-btn" onclick="refreshInstanceList()" class="text-[10px] font-label-bold text-primary-fixed hover:text-white transition-colors flex items-center gap-1">
+                        <span class="material-symbols-outlined text-[14px]">refresh</span> Actualizar
+                    </button>
+                </div>
+                <div id="instance-suggestions" class="grid grid-cols-2 gap-2">
+                    <button type="button" onclick="setInstanceUrl('https://grapefruit.clxxped.lol')" class="text-[11px] font-label-bold bg-surface-container hover:bg-primary-fixed hover:text-on-primary-fixed transition-colors border border-surface-container-highest py-2 px-3 text-left">
+                        ⭐ Clxxped (100%)
+                    </button>
+                    <button type="button" onclick="setInstanceUrl('https://nuko-c.meowing.de')" class="text-[11px] font-label-bold bg-surface-container hover:bg-primary-fixed hover:text-on-primary-fixed transition-colors border border-surface-container-highest py-2 px-3 text-left">
+                        🐱 Meowing (100%)
+                    </button>
+                    <button type="button" onclick="setInstanceUrl('https://cobaltapi.kittycat.boo')" class="text-[11px] font-label-bold bg-surface-container hover:bg-primary-fixed hover:text-on-primary-fixed transition-colors border border-surface-container-highest py-2 px-3 text-left">
+                        🐈 KittyCat (91%)
+                    </button>
+                    <button type="button" onclick="setInstanceUrl('https://api.qwkuns.me')" class="text-[11px] font-label-bold bg-surface-container hover:bg-primary-fixed hover:text-on-primary-fixed transition-colors border border-surface-container-highest py-2 px-3 text-left">
+                        🚀 Qwkuns (87%)
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-2">
+                <label for="settings-api-key" class="font-label-bold text-label-bold text-secondary uppercase tracking-wider">API Key (Opcional)</label>
+                <input id="settings-api-key" type="password" class="w-full bg-surface-container border border-surface-container-highest text-primary p-3 focus:border-primary-fixed focus:ring-0 focus:outline-none" placeholder="Ingresa API Key si tu servidor lo requiere">
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div class="flex flex-col gap-2">
+                    <label for="settings-filename-style" class="font-label-bold text-label-bold text-secondary uppercase tracking-wider">Nombres de Archivo</label>
+                    <select id="settings-filename-style" class="w-full bg-surface-container border border-surface-container-highest text-primary p-3 focus:border-primary-fixed focus:ring-0 focus:outline-none">
+                        <option value="basic">Básico</option>
+                        <option value="pretty">Bonito</option>
+                        <option value="classic">Clásico</option>
+                        <option value="nerdy">Detallado</option>
+                    </select>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <label for="settings-audio-bitrate" class="font-label-bold text-label-bold text-secondary uppercase tracking-wider">Calidad de Audio</label>
+                    <select id="settings-audio-bitrate" class="w-full bg-surface-container border border-surface-container-highest text-primary p-3 focus:border-primary-fixed focus:ring-0 focus:outline-none">
+                        <option value="320">320 kbps (Alta)</option>
+                        <option value="256">256 kbps</option>
+                        <option value="128" selected>128 kbps</option>
+                        <option value="64">64 kbps (Baja)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-4 mt-4 border-t border-surface-container-highest pt-4">
+                <button id="reset-settings" class="px-4 py-2 border border-surface-container-highest text-secondary hover:text-primary hover:border-secondary transition-colors uppercase font-label-bold text-label-bold">Reestablecer</button>
+                <button id="save-settings" class="px-6 py-2 bg-primary-fixed text-on-primary-fixed hover:bg-surface-tint transition-colors uppercase font-label-bold text-label-bold">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- History Modal -->
+<div id="history-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/90 backdrop-blur-sm hidden transition-all duration-300 opacity-0 pointer-events-none">
+    <div class="bg-surface border-2 border-primary-fixed p-8 w-full max-w-lg relative overflow-hidden neo-card transform scale-95 transition-all duration-300">
+        <div class="absolute inset-0 manga-halftone pointer-events-none opacity-5"></div>
+        <div class="relative z-10 flex flex-col gap-6">
+            <div class="flex justify-between items-center border-b border-surface-container-highest pb-4">
+                <h3 class="font-display-lg text-headline-md text-primary uppercase italic">HISTORIAL</h3>
+                <button id="close-history" class="text-secondary hover:text-primary-fixed transition-colors flex items-center justify-center">
+                    <span class="material-symbols-outlined font-headline-md">close</span>
+                </button>
+            </div>
+            
+            <div id="history-list" class="max-h-[300px] overflow-y-auto flex flex-col gap-4 pr-2 select-text">
+                <div class="text-center py-8 text-secondary font-body-md">El historial está vacío. ¡Empieza a liberar contenido!</div>
+            </div>
+
+            <div class="flex justify-between items-center mt-4 border-t border-surface-container-highest pt-4">
+                <button id="clear-history" class="px-4 py-2 border border-error/50 text-error hover:border-error hover:bg-error/10 transition-colors uppercase font-label-bold text-label-bold">Limpiar</button>
+                <button id="close-history-btn" class="px-6 py-2 bg-primary-fixed text-on-primary-fixed hover:bg-surface-tint transition-colors uppercase font-label-bold text-label-bold">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- DMCA Modal -->
+<div id="dmca-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/90 backdrop-blur-sm hidden transition-all duration-300 opacity-0 pointer-events-none">
+    <div class="bg-surface border-2 border-primary-fixed p-8 w-full max-w-lg relative overflow-hidden neo-card transform scale-95 transition-all duration-300">
+        <div class="absolute inset-0 manga-halftone pointer-events-none opacity-5"></div>
+        <div class="relative z-10 flex flex-col gap-6">
+            <div class="flex justify-between items-center border-b border-surface-container-highest pb-4">
+                <h3 class="font-display-lg text-headline-md text-primary uppercase italic">DMCA & Legal</h3>
+                <button id="close-dmca" class="text-secondary hover:text-primary-fixed transition-colors flex items-center justify-center">
+                    <span class="material-symbols-outlined font-headline-md">close</span>
+                </button>
+            </div>
+            
+            <div class="max-h-[400px] overflow-y-auto flex flex-col gap-4 pr-2 select-text font-body-md text-secondary">
+                <p><strong>YT-UNCLOGGED</strong> es estrictamente una interfaz del lado del cliente que utiliza APIs externas de terceros (como instancias públicas de Cobalt) para procesar las solicitudes.</p>
+                <p>No alojamos, almacenamos, guardamos en caché ni distribuimos ningún material con derechos de autor en nuestros servidores. Todo el procesamiento y descarga de medios ocurre directamente entre el navegador del usuario y el servidor API de terceros seleccionado.</p>
+                <p>Debido a que no tenemos control sobre el contenido transmitido a través de estas APIs externas, no asumimos ninguna responsabilidad legal por las descargas o el uso de los medios. Cualquier aviso de eliminación DMCA o reclamo de derechos de autor debe dirigirse a los operadores de las instancias API respectivas o a los anfitriones originales del contenido.</p>
+                <p>Al utilizar este servicio, aceptas asumir toda la responsabilidad por los medios que descargas y asegurar que tienes los derechos o permisos para hacerlo bajo las leyes aplicables de uso justo.</p>
+            </div>
+
+            <div class="flex justify-end items-center mt-4 border-t border-surface-container-highest pt-4">
+                <button id="close-dmca-btn" class="px-6 py-2 bg-primary-fixed text-on-primary-fixed hover:bg-surface-tint transition-colors uppercase font-label-bold text-label-bold">Entendido</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Privacy Modal -->
+<div id="privacy-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/90 backdrop-blur-sm hidden transition-all duration-300 opacity-0 pointer-events-none">
+    <div class="bg-surface border-2 border-primary-fixed p-8 w-full max-w-lg relative overflow-hidden neo-card transform scale-95 transition-all duration-300">
+        <div class="absolute inset-0 manga-halftone pointer-events-none opacity-5"></div>
+        <div class="relative z-10 flex flex-col gap-6">
+            <div class="flex justify-between items-center border-b border-surface-container-highest pb-4">
+                <h3 class="font-display-lg text-headline-md text-primary uppercase italic">Privacidad</h3>
+                <button id="close-privacy" class="text-secondary hover:text-primary-fixed transition-colors flex items-center justify-center">
+                    <span class="material-symbols-outlined font-headline-md">close</span>
+                </button>
+            </div>
+            
+            <div class="max-h-[400px] overflow-y-auto flex flex-col gap-4 pr-2 select-text font-body-md text-secondary">
+                <p><strong>YT-UNCLOGGED</strong> prioriza tu privacidad por encima de todo.</p>
+                <p><strong>Sin Rastreo:</strong> No utilizamos cookies, analíticas ni rastreadores de ningún tipo. Tu actividad en este sitio es completamente privada.</p>
+                <p><strong>Almacenamiento Local:</strong> Tus ajustes y el historial de descargas se guardan exclusivamente en el LocalStorage de tu navegador. Estos datos nunca salen de tu dispositivo ni se transmiten a nosotros.</p>
+                <p><strong>Procesamiento de Datos:</strong> Cualquier URL que ingreses se envía directamente a la instancia API de Cobalt seleccionada. No interceptamos, registramos ni monitoreamos tus solicitudes. Por favor, revisa la política de privacidad de la instancia API que elijas usar para conocer sus prácticas de manejo de datos.</p>
+            </div>
+
+            <div class="flex justify-end items-center mt-4 border-t border-surface-container-highest pt-4">
+                <button id="close-privacy-btn" class="px-6 py-2 bg-primary-fixed text-on-primary-fixed hover:bg-surface-tint transition-colors uppercase font-label-bold text-label-bold">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Terms Modal -->
+<div id="terms-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/90 backdrop-blur-sm hidden transition-all duration-300 opacity-0 pointer-events-none">
+    <div class="bg-surface border-2 border-primary-fixed p-8 w-full max-w-lg relative overflow-hidden neo-card transform scale-95 transition-all duration-300">
+        <div class="absolute inset-0 manga-halftone pointer-events-none opacity-5"></div>
+        <div class="relative z-10 flex flex-col gap-6">
+            <div class="flex justify-between items-center border-b border-surface-container-highest pb-4">
+                <h3 class="font-display-lg text-headline-md text-primary uppercase italic">Términos</h3>
+                <button id="close-terms" class="text-secondary hover:text-primary-fixed transition-colors flex items-center justify-center">
+                    <span class="material-symbols-outlined font-headline-md">close</span>
+                </button>
+            </div>
+            
+            <div class="max-h-[400px] overflow-y-auto flex flex-col gap-4 pr-2 select-text font-body-md text-secondary">
+                <p>Al utilizar <strong>YT-UNCLOGGED</strong>, aceptas los siguientes términos:</p>
+                <p><strong>1. Uso Personal:</strong> Esta herramienta está diseñada para uso personal y no comercial, como el archivo de medios, el uso justo o la visualización sin conexión de contenido al que tienes derecho de acceso.</p>
+                <p><strong>2. Sin Abuso:</strong> No utilices esta herramienta para automatizar descargas masivas o sobrecargar las instancias API públicas proporcionadas por la comunidad.</p>
+                <p><strong>3. Servicio "Tal Cual":</strong> El servicio se proporciona "tal cual" sin garantías de ningún tipo. No garantizamos el tiempo de actividad ni la fiabilidad de las APIs externas.</p>
+                <p><strong>4. Cumplimiento:</strong> Aceptas cumplir con todas las leyes de derechos de autor locales e internacionales aplicables al utilizar esta herramienta.</p>
+            </div>
+
+            <div class="flex justify-end items-center mt-4 border-t border-surface-container-highest pt-4">
+                <button id="close-terms-btn" class="px-6 py-2 bg-primary-fixed text-on-primary-fixed hover:bg-surface-tint transition-colors uppercase font-label-bold text-label-bold">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Status Alert Toast (Neo-brutalist Banner) -->
+<div id="status-toast" class="fixed top-8 left-1/2 transform -translate-x-1/2 z-[200] max-w-md w-full px-4 transition-all duration-300 opacity-0 translate-y-[-20px] pointer-events-none">
+    <div id="status-toast-card" class="bg-surface border-2 border-primary-fixed p-4 shadow-[-4px_4px_0px_0px_#c3f400] flex items-start gap-4">
+        <span id="status-toast-icon" class="material-symbols-outlined text-primary-fixed">info</span>
+        <div class="flex-grow select-text">
+            <h4 id="status-toast-title" class="font-label-bold text-label-bold uppercase text-primary tracking-wider">Estado</h4>
+            <p id="status-toast-message" class="font-body-md text-[13px] text-secondary mt-1"></p>
+        </div>
+        <button id="close-toast" class="text-secondary hover:text-primary flex items-center justify-center mt-0.5">
+            <span class="material-symbols-outlined text-[18px]">close</span>
+        </button>
+    </div>
+</div>
+
+<script>
+    // Configuración por defecto (usando instancias verificadas activas en cobalt.directory)
+    const DEFAULT_SETTINGS = {
+        apiUrl: 'https://grapefruit.clxxped.lol',
+        apiKey: '',
+        filenameStyle: 'basic',
+        audioBitrate: '128'
+    };
+
+    // Lista de servidores de respaldo verificados activos (actualizado desde cobalt.directory)
+    // Estas instancias tienen YouTube habilitado y score alto
+    let FALLBACK_INSTANCES = [
+        'https://grapefruit.clxxped.lol',    // 100% score, YouTube ✅
+        'https://nuko-c.meowing.de',          // 100% score, YouTube ✅
+        'https://cobaltapi.kittycat.boo',     // 91% score, YouTube ✅
+        'https://cobaltapi.squair.xyz',       // 91% score, YouTube ✅
+        'https://api.cobalt.blackcat.sweeux.org', // 87% score, YouTube ✅
+        'https://api.qwkuns.me',              // 87% score, YouTube ✅, 37d uptime
+        'https://apicobalt.mgytr.top'         // 83% score, YouTube ✅, 16d uptime
+    ];
+
+    // Instancias conocidas que no funcionan (para migrar automáticamente)
+    const DEAD_INSTANCES = [
+        'https://api.cobalt.tools',
+        'https://cobalt.kwiateek.pl',
+        'https://cobalt.mor1.dev',
+        'https://api.cobalt.best',
+        'https://api.cobalt.run',
+        'https://cobalt.cr.us.kg'
+    ];
+
+    // Cargar configuraciones del localStorage o usar valores por defecto
+    let appSettings = JSON.parse(localStorage.getItem('yt_unclogged_settings')) || { ...DEFAULT_SETTINGS };
+    let appHistory = JSON.parse(localStorage.getItem('yt_unclogged_history')) || [];
+
+    // Migrar automáticamente si el usuario tiene configurada una instancia que sabemos que está caída
+    if (!appSettings.apiUrl || DEAD_INSTANCES.includes(appSettings.apiUrl)) {
+        appSettings.apiUrl = DEFAULT_SETTINGS.apiUrl;
+        localStorage.setItem('yt_unclogged_settings', JSON.stringify(appSettings));
+    }
+
+    // Cargar instancias dinámicas desde cobalt.directory API al iniciar
+    async function loadDynamicInstances() {
+        try {
+            const resp = await fetch('https://cobalt.directory/api/instances.json');
+            if (!resp.ok) return;
+            const data = await resp.json();
+            
+            // Filtrar instancias community que estén online y soporten YouTube
+            const liveInstances = data
+                .filter(inst => 
+                    inst.online && 
+                    inst.protocol === 'https' && 
+                    inst.api && 
+                    inst.tests && 
+                    inst.tests.youtube && 
+                    inst.tests.youtube.status === true
+                )
+                .sort((a, b) => (b.scorePct || 0) - (a.scorePct || 0))
+                .map(inst => `https://${inst.api}`);
+            
+            if (liveInstances.length > 0) {
+                FALLBACK_INSTANCES = liveInstances;
+                console.log(`[YT-UNCLOGGED] Cargadas ${liveInstances.length} instancias activas desde cobalt.directory`);
+                
+                // Actualizar sugerencias visuales en el modal de ajustes
+                updateInstanceSuggestions(data.filter(inst => 
+                    inst.online && inst.protocol === 'https' && inst.api &&
+                    inst.tests && inst.tests.youtube && inst.tests.youtube.status === true
+                ).sort((a, b) => (b.scorePct || 0) - (a.scorePct || 0)).slice(0, 4));
+            }
+        } catch (e) {
+            console.warn('[YT-UNCLOGGED] No se pudieron cargar instancias dinámicas, usando lista local.', e);
+        }
+    }
+
+    // Actualizar los botones de sugerencias de instancias en el modal de Ajustes
+    function updateInstanceSuggestions(instances) {
+        const container = document.getElementById('instance-suggestions');
+        if (!container || instances.length === 0) return;
+        
+        const emojis = ['⭐', '🔥', '🚀', '💎', '⚡', '🐱'];
+        container.innerHTML = instances.map((inst, i) => {
+            const apiUrl = `https://${inst.api}`;
+            const name = inst.frontend || inst.api.split('.')[0];
+            const score = inst.scorePct || '?';
+            const emoji = emojis[i] || '🌐';
+            return `<button type="button" onclick="setInstanceUrl('${apiUrl}')" class="text-[11px] font-label-bold bg-surface-container hover:bg-primary-fixed hover:text-on-primary-fixed transition-colors border border-surface-container-highest py-2 px-3 text-left">
+                ${emoji} ${name} (${score}%)
+            </button>`;
+        }).join('');
+    }
+
+    // Botón de refrescar instancias manualmente
+    window.refreshInstanceList = async function() {
+        const btn = document.getElementById('refresh-instances-btn');
+        if (btn) btn.innerHTML = '<span class="material-symbols-outlined text-[14px] animate-spin">refresh</span> Cargando...';
+        await loadDynamicInstances();
+        if (btn) btn.innerHTML = '<span class="material-symbols-outlined text-[14px]">refresh</span> Actualizar';
+        showToast('INFO', 'Lista de instancias actualizada desde cobalt.directory.', 'info');
+    };
+
+    // Cargar instancias al inicio (sin bloquear la UI)
+    loadDynamicInstances();
+
+    // Elementos DOM
+    const openSettingsBtn = document.getElementById('open-settings');
+    const closeSettingsBtn = document.getElementById('close-settings');
+    const resetSettingsBtn = document.getElementById('reset-settings');
+    const saveSettingsBtn = document.getElementById('save-settings');
+    const settingsModal = document.getElementById('settings-modal');
+    
+    const settingsApiUrlInput = document.getElementById('settings-api-url');
+    const settingsApiKeyInput = document.getElementById('settings-api-key');
+    const settingsFilenameStyleSelect = document.getElementById('settings-filename-style');
+    const settingsAudioBitrateSelect = document.getElementById('settings-audio-bitrate');
+
+    const openHistoryBtn = document.getElementById('open-history');
+    const closeHistoryBtn = document.getElementById('close-history');
+    const closeHistoryBtn2 = document.getElementById('close-history-btn');
+    const clearHistoryBtn = document.getElementById('clear-history');
+    const historyModal = document.getElementById('history-modal');
+    const historyList = document.getElementById('history-list');
+
+    const dmcaModal = document.getElementById('dmca-modal');
+    const openDmcaBtn = document.getElementById('open-dmca');
+    const closeDmcaBtn = document.getElementById('close-dmca');
+    const closeDmcaBtn2 = document.getElementById('close-dmca-btn');
+
+    const privacyModal = document.getElementById('privacy-modal');
+    const openPrivacyBtn = document.getElementById('open-privacy');
+    const closePrivacyBtn = document.getElementById('close-privacy');
+    const closePrivacyBtn2 = document.getElementById('close-privacy-btn');
+
+    const termsModal = document.getElementById('terms-modal');
+    const openTermsBtn = document.getElementById('open-terms');
+    const closeTermsBtn = document.getElementById('close-terms');
+    const closeTermsBtn2 = document.getElementById('close-terms-btn');
+
+    const unclogBtn = document.getElementById('unclog-btn');
+    const unclogBtnText = document.getElementById('unclog-btn-text');
+    const unclogBtnIcon = document.getElementById('unclog-btn-icon');
+    const urlInput = document.getElementById('url-input');
+
+    const statusToast = document.getElementById('status-toast');
+    const statusToastCard = document.getElementById('status-toast-card');
+    const statusToastIcon = document.getElementById('status-toast-icon');
+    const statusToastTitle = document.getElementById('status-toast-title');
+    const statusToastMessage = document.getElementById('status-toast-message');
+    const closeToastBtn = document.getElementById('close-toast');
+
+    // Elemento del badge de servidor activo
+    const activeServerNameSpan = document.getElementById('active-server-name');
+
+    // Función para formatear y actualizar el badge del servidor activo
+    function updateActiveServerBadge(url) {
+        if (!activeServerNameSpan) return;
+        try {
+            const parsed = new URL(url || appSettings.apiUrl);
+            let name = parsed.hostname;
+            // Simplificar nombres comunes
+            if (name.includes('clxxped')) name = 'Grapefruit (100%)';
+            else if (name.includes('meowing')) name = 'Meowing (100%)';
+            else if (name.includes('kittycat')) name = 'KittyCat (91%)';
+            else if (name.includes('squair')) name = 'Squair (91%)';
+            else if (name.includes('sweeux')) name = 'Blackcat (87%)';
+            else if (name.includes('qwkuns')) name = 'Qwkuns (87%)';
+            else if (name.includes('mgytr')) name = 'Mgytr (83%)';
+            
+            activeServerNameSpan.innerText = name;
+        } catch (_) {
+            activeServerNameSpan.innerText = 'Personalizado';
+        }
+    }
+
+    // Inicializar inputs de configuración
+    function initSettingsInputs() {
+        settingsApiUrlInput.value = appSettings.apiUrl || DEFAULT_SETTINGS.apiUrl;
+        settingsApiKeyInput.value = appSettings.apiKey || '';
+        settingsFilenameStyleSelect.value = appSettings.filenameStyle || DEFAULT_SETTINGS.filenameStyle;
+        settingsAudioBitrateSelect.value = appSettings.audioBitrate || DEFAULT_SETTINGS.audioBitrate;
+        updateActiveServerBadge();
+        updateButtonState();
+    }
+
+    // Seleccionar instancia rápida desde sugerencias
+    window.setInstanceUrl = function(url) {
+        settingsApiUrlInput.value = url;
+        showToast('INFO', `Instancia seleccionada: ${url}. Haz clic en GUARDAR para aplicar los cambios.`, 'info');
+    };
+
+    // Guardar configuraciones
+    function saveSettings() {
+        // Asegurarse de quitar las barras diagonales al final de la URL
+        let cleanUrl = settingsApiUrlInput.value.trim().replace(/\/+$/, "");
+        if (!cleanUrl) {
+            cleanUrl = DEFAULT_SETTINGS.apiUrl;
+        }
+        
+        appSettings = {
+            apiUrl: cleanUrl,
+            apiKey: settingsApiKeyInput.value.trim(),
+            filenameStyle: settingsFilenameStyleSelect.value,
+            audioBitrate: settingsAudioBitrateSelect.value
+        };
+        
+        localStorage.setItem('yt_unclogged_settings', JSON.stringify(appSettings));
+        updateActiveServerBadge();
+        showToast('ÉXITO', 'Configuración guardada correctamente.', 'success');
+        closeModal(settingsModal);
+    }
+
+    // Reestablecer configuraciones
+    function resetSettings() {
+        appSettings = { ...DEFAULT_SETTINGS };
+        localStorage.setItem('yt_unclogged_settings', JSON.stringify(appSettings));
+        initSettingsInputs();
+        updateActiveServerBadge();
+        showToast('INFO', 'Configuración reestablecida a los valores originales.', 'info');
+    }
+
+    // Abrir modal con animación
+    function openModal(modal) {
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modal.querySelector('.neo-card').classList.remove('scale-95');
+            modal.querySelector('.neo-card').classList.add('scale-100');
+        }, 10);
+    }
+
+    // Cerrar modal con animación
+    function closeModal(modal) {
+        modal.classList.add('opacity-0', 'pointer-events-none');
+        modal.querySelector('.neo-card').classList.remove('scale-100');
+        modal.querySelector('.neo-card').classList.add('scale-95');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 300);
+    }
+
+    // Mostrar alerta Toast (Neo-brutalist)
+    let toastTimeout;
+    function showToast(title, message, type = 'info') {
+        clearTimeout(toastTimeout);
+        
+        statusToastTitle.innerText = title;
+        statusToastMessage.innerText = message;
+        
+        // Estilo según tipo
+        if (type === 'success') {
+            statusToastCard.style.borderColor = '#c3f400';
+            statusToastCard.style.boxShadow = '-4px 4px 0px 0px #c3f400';
+            statusToastIcon.innerText = 'check_circle';
+            statusToastIcon.style.color = '#c3f400';
+        } else if (type === 'error') {
+            statusToastCard.style.borderColor = '#ffb4ab';
+            statusToastCard.style.boxShadow = '-4px 4px 0px 0px #ffb4ab';
+            statusToastIcon.innerText = 'error';
+            statusToastIcon.style.color = '#ffb4ab';
+        } else {
+            statusToastCard.style.borderColor = '#ffffff';
+            statusToastCard.style.boxShadow = '-4px 4px 0px 0px #ffffff';
+            statusToastIcon.innerText = 'info';
+            statusToastIcon.style.color = '#ffffff';
+        }
+
+        statusToast.classList.remove('opacity-0', 'translate-y-[-20px]', 'pointer-events-none');
+        statusToast.classList.add('opacity-100', 'translate-y-0');
+        
+        toastTimeout = setTimeout(() => {
+            hideToast();
+        }, 6000);
+    }
+
+    function hideToast() {
+        statusToast.classList.remove('opacity-100', 'translate-y-0');
+        statusToast.classList.add('opacity-0', 'translate-y-[-20px]', 'pointer-events-none');
+    }
+
+    // Renderizar lista de historial
+    function renderHistory() {
+        historyList.innerHTML = '';
+        if (appHistory.length === 0) {
+            historyList.innerHTML = '<div class="text-center py-8 text-secondary font-body-md">El historial está vacío. ¡Empieza a liberar contenido!</div>';
+            return;
+        }
+
+        appHistory.forEach((item, index) => {
+            const date = new Date(item.timestamp).toLocaleDateString('es-ES', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+
+            const isMp3 = item.format === 'mp3';
+
+            const card = document.createElement('div');
+            card.className = 'bg-surface-container border border-surface-container-highest p-4 flex flex-col gap-2 relative group hover:border-primary-fixed transition-colors';
+            card.innerHTML = `
+                <div class="flex justify-between items-start gap-4">
+                    <div class="flex-grow min-w-0">
+                        <h4 class="font-label-bold text-[13px] text-primary truncate uppercase">${item.title || 'Video Liberado'}</h4>
+                        <a href="${item.url}" target="_blank" class="text-[11px] text-secondary hover:text-primary-fixed truncate block mt-0.5">${item.url}</a>
+                    </div>
+                    <span class="text-[10px] bg-surface p-1 border border-surface-container-highest font-label-bold uppercase text-primary-fixed">
+                        ${isMp3 ? 'Audio' : item.quality + 'p'}
+                    </span>
+                </div>
+                <div class="flex justify-between items-center mt-2 pt-2 border-t border-surface-container/50">
+                    <span class="text-[10px] text-secondary/60">${date}</span>
+                    <div class="flex gap-2">
+                        <button onclick="deleteHistoryItem(${index})" class="text-error/70 hover:text-error text-[11px] font-label-bold uppercase flex items-center justify-center gap-1 transition-colors">
+                            <span class="material-symbols-outlined text-[14px]">delete</span> Borrar
+                        </button>
+                        <a href="${item.downloadUrl}" download target="_blank" class="text-primary-fixed hover:text-white text-[11px] font-label-bold uppercase flex items-center justify-center gap-1 transition-colors">
+                            <span class="material-symbols-outlined text-[14px]">download</span> Bajar
+                        </a>
+                    </div>
+                </div>
+            `;
+            historyList.appendChild(card);
+        });
+    }
+
+    // Borrar elemento individual del historial
+    window.deleteHistoryItem = function(index) {
+        appHistory.splice(index, 1);
+        localStorage.setItem('yt_unclogged_history', JSON.stringify(appHistory));
+        renderHistory();
+        showToast('INFO', 'Elemento eliminado del historial.', 'info');
+    };
+
+    // Limpiar todo el historial
+    function clearHistory() {
+        if (appHistory.length === 0) return;
+        if (confirm('¿Seguro que deseas limpiar todo tu historial de descargas?')) {
+            appHistory = [];
+            localStorage.setItem('yt_unclogged_history', JSON.stringify(appHistory));
+            renderHistory();
+            showToast('INFO', 'Historial limpiado correctamente.', 'info');
+        }
+    }
+
+    // Manejar lógica de descarga con sistema de redundancia inteligente (fallbacks)
+    async function handleDownload() {
+        const urlValue = urlInput.value.trim();
+        if (!urlValue) {
+            showToast('ERROR', 'Por favor pega un enlace válido para empezar.', 'error');
+            return;
+        }
+
+        // Expresión regular muy flexible para cualquier URL de descarga
+        try {
+            new URL(urlValue);
+        } catch (_) {
+            showToast('ERROR', 'La URL introducida no es válida.', 'error');
+            return;
+        }
+
+        // Obtener formato seleccionado
+        const selectedFormat = document.querySelector('input[name="format"]:checked').value;
+        // Obtener calidad seleccionada
+        const selectedQuality = document.querySelector('input[name="quality"]:checked').value;
+
+        // Deshabilitar botón e input
+        unclogBtn.disabled = true;
+        urlInput.disabled = true;
+        unclogBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        
+        unclogBtnText.innerText = 'CONECTANDO...';
+        unclogBtnIcon.innerText = 'sync';
+        unclogBtnIcon.classList.add('animate-spin');
+
+        // Construir cuerpo de petición de Cobalt
+        const requestData = {
+            url: urlValue,
+            filenameStyle: appSettings.filenameStyle,
+            downloadMode: selectedFormat === 'mp3' ? 'audio' : 'auto'
+        };
+
+        if (selectedFormat === 'mp3') {
+            requestData.audioFormat = 'mp3';
+            requestData.audioBitrate = appSettings.audioBitrate;
+        } else {
+            requestData.videoQuality = selectedQuality;
+        }
+
+        // Construir la lista de URLs a intentar (empezando por la configurada)
+        const configuredUrl = appSettings.apiUrl || DEFAULT_SETTINGS.apiUrl;
+        const candidateUrls = [configuredUrl];
+        
+        FALLBACK_INSTANCES.forEach(url => {
+            if (url !== configuredUrl) {
+                candidateUrls.push(url);
+            }
+        });
+
+        let success = false;
+        let lastError = null;
+
+        // Bucle de reintentos sobre todos los servidores candidatos
+        for (let i = 0; i < candidateUrls.length; i++) {
+            const currentUrl = candidateUrls[i];
+            
+            if (i > 0) {
+                showToast('REINTENTANDO', `Servidor fallido. Probando respaldo (${i}/${candidateUrls.length - 1}): ${new URL(currentUrl).hostname}...`, 'info');
+                unclogBtnText.innerText = `RESPALDO ${i}...`;
+            } else {
+                unclogBtnText.innerText = 'PROCESANDO...';
+            }
+
+            try {
+                const headers = {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                };
+
+                // Solo enviar API Key si estamos usando la instancia que el usuario configuró explícitamente
+                if (appSettings.apiKey && currentUrl === configuredUrl) {
+                    headers['Authorization'] = `Api-Key ${appSettings.apiKey}`;
+                }
+
+                let response = null;
+                let fetchError = null;
+
+                // Intentar conectar al endpoint principal POST / (Cobalt v10+)
+                try {
+                    response = await fetch(`${currentUrl}/`, {
+                        method: 'POST',
+                        headers: headers,
+                        body: JSON.stringify(requestData)
+                    });
+                } catch (err) {
+                    fetchError = err;
+                }
+
+                // Si falló (ej. error de red o endpoint inexistente), probar con /api/json
+                if (!response || !response.ok) {
+                    try {
+                        response = await fetch(`${currentUrl}/api/json`, {
+                            method: 'POST',
+                            headers: headers,
+                            body: JSON.stringify(requestData)
+                        });
+                        fetchError = null; // Borrar el error si este endpoint responde
+                    } catch (err) {
+                        if (!response) {
+                            fetchError = err;
+                        }
+                    }
+                }
+
+                if (fetchError) {
+                    throw fetchError;
+                }
+
+                if (!response.ok) {
+                    const errData = await response.json().catch(() => ({}));
+                    let errorMsg = 'Error del servidor de descarga.';
+                    if (errData && errData.error && errData.error.code) {
+                        const code = errData.error.code;
+                        if (code.includes('rate_limit')) {
+                            errorMsg = 'Límite de velocidad superado en esta instancia.';
+                        } else if (code.includes('url')) {
+                            errorMsg = 'El enlace proporcionado no es soportado o está roto.';
+                        } else if (code.includes('auth')) {
+                            errorMsg = 'Esta instancia requiere API Key o autenticación.';
+                        } else if (errData.error.context) {
+                            errorMsg = errData.error.context;
+                        }
+                    }
+                    throw new Error(errorMsg);
+                }
+
+                const data = await response.json();
+                
+                if (data.status === 'error') {
+                    throw new Error(data.error && data.error.code ? `Error: ${data.error.code}` : 'Error desconocido de Cobalt.');
+                }
+
+                if (data.status === 'redirect' || data.status === 'tunnel') {
+                    unclogBtnText.innerText = 'DESCARGANDO...';
+                    
+                    const fallbackMsg = currentUrl !== configuredUrl 
+                        ? ` (vía respaldo: ${new URL(currentUrl).hostname})` 
+                        : '';
+
+                    const defaultFilename = selectedFormat === 'mp3' 
+                        ? 'YT-Unclogged-Audio.mp3' 
+                        : 'YT-Unclogged-Video.mp4';
+                    const filename = data.filename || defaultFilename;
+
+                    let downloadBlobUrl = null;
+
+                    // ── REDIRECT: Descarga directa nativa del navegador ──
+                    // Usamos anchor tag directo para que el navegador maneje
+                    // la descarga nativamente, preservando la estructura MP4
+                    // (moov atom, índices de búsqueda) y evitando problemas
+                    // donde el reproductor no puede avanzar/retroceder.
+                    if (data.status === 'redirect') {
+                        unclogBtnIcon.classList.remove('animate-spin');
+                        showToast('DESCARGANDO', `Descarga directa iniciada${fallbackMsg}. El navegador gestionará la descarga.`, 'info');
+                        
+                        const tempAnchor = document.createElement('a');
+                        tempAnchor.href = data.url;
+                        tempAnchor.download = filename;
+                        tempAnchor.target = '_blank';
+                        tempAnchor.rel = 'noopener noreferrer';
+                        document.body.appendChild(tempAnchor);
+                        tempAnchor.click();
+                        document.body.removeChild(tempAnchor);
+                        
+                        showToast('ÉXITO', `¡Descarga iniciada correctamente!${fallbackMsg}`, 'success');
+                    }
+
+                    // ── TUNNEL: Descarga con progreso via ReadableStream ──
+                    // En modo tunnel, Cobalt proxy el archivo desde su servidor.
+                    // Usamos ReadableStream para mostrar progreso en tiempo real.
+                    if (data.status === 'tunnel') {
+                        try {
+                            unclogBtnIcon.classList.remove('animate-spin');
+                            showToast('DESCARGANDO', `Descargando archivo desde el servidor${fallbackMsg}... Esto puede tardar.`, 'info');
+                            
+                            const fileResponse = await fetch(data.url);
+                            if (!fileResponse.ok) {
+                                throw new Error(`El servidor de descarga devolvió un error (HTTP ${fileResponse.status}). Intenta con otra calidad u otra Instancia API en Ajustes.`);
+                            }
+                            
+                            // Detectar MIME type del servidor para preservar estructura del archivo
+                            const serverMimeType = fileResponse.headers.get('content-type');
+                            const fileMimeType = serverMimeType 
+                                || (selectedFormat === 'mp3' ? 'audio/mpeg' : 'video/mp4');
+
+                            const contentLength = fileResponse.headers.get('content-length');
+                            const totalBytes = contentLength ? parseInt(contentLength, 10) : 0;
+                            
+                            // Mostrar panel de progreso
+                            const progressCard = document.getElementById('download-progress-card');
+                            const progressFill = document.getElementById('progress-bar-fill');
+                            const progressPercent = document.getElementById('progress-percent');
+                            const progressStats = document.getElementById('progress-stats');
+                            const progressStatus = document.getElementById('progress-status');
+                            const progressSpeed = document.getElementById('progress-speed');
+                            const progressFilename = document.getElementById('progress-filename');
+                            
+                            if (progressCard) {
+                                progressCard.classList.remove('hidden');
+                                progressCard.classList.add('flex');
+                                progressCard.classList.remove('opacity-0');
+                                
+                                if (totalBytes > 0) {
+                                    if (progressFill) {
+                                        progressFill.classList.remove('indeterminate-bar', 'animate-pulse');
+                                        progressFill.style.width = '0%';
+                                    }
+                                    if (progressPercent) progressPercent.innerText = '0%';
+                                    if (progressStats) progressStats.innerText = `0.0 MB / ${(totalBytes / (1024 * 1024)).toFixed(1)} MB`;
+                                    if (progressStatus) progressStatus.innerText = 'INICIANDO DESCARGA...';
+                                } else {
+                                    if (progressFill) {
+                                        progressFill.classList.remove('indeterminate-bar');
+                                        progressFill.classList.add('animate-pulse');
+                                        progressFill.style.width = '100%';
+                                    }
+                                    if (progressPercent) progressPercent.innerText = 'DESCARGANDO...';
+                                    if (progressStats) progressStats.innerText = '0.0 MB descargados';
+                                    if (progressStatus) progressStatus.innerText = 'PROCESANDO DESCARGA...';
+                                }
+                                progressSpeed.innerText = 'Velocidad: -- MB/s';
+                                progressFilename.innerText = filename;
+                            }
+                            
+                            const reader = fileResponse.body.getReader();
+                            let loadedBytes = 0;
+                            const chunks = [];
+                            const startTime = Date.now();
+                            let lastUpdateTime = startTime;
+                            let lastLoadedBytes = 0;
+                            
+                            while (true) {
+                                const { done, value } = await reader.read();
+                                if (done) break;
+                                
+                                chunks.push(value);
+                                loadedBytes += value.length;
+                                
+                                const now = Date.now();
+                                if (now - lastUpdateTime > 100 || (totalBytes > 0 && loadedBytes === totalBytes)) {
+                                    const recentSeconds = (now - lastUpdateTime) / 1000;
+                                    const recentBytes = loadedBytes - lastLoadedBytes;
+                                    
+                                    const speedBytesPerSec = recentSeconds > 0 ? recentBytes / recentSeconds : 0;
+                                    const speedMbPerSec = (speedBytesPerSec / (1024 * 1024)).toFixed(1);
+                                    
+                                    const loadedMb = (loadedBytes / (1024 * 1024)).toFixed(1);
+                                    
+                                    if (totalBytes > 0) {
+                                        const percent = Math.round((loadedBytes / totalBytes) * 100);
+                                        const totalMb = (totalBytes / (1024 * 1024)).toFixed(1);
+                                        if (progressFill) {
+                                            progressFill.classList.remove('indeterminate-bar', 'animate-pulse');
+                                            progressFill.style.width = `${percent}%`;
+                                        }
+                                        if (progressPercent) progressPercent.innerText = `${percent}%`;
+                                        if (progressStats) progressStats.innerText = `${loadedMb} MB / ${totalMb} MB`;
+                                        if (progressStatus) progressStatus.innerText = 'DESCARGANDO...';
+                                    } else {
+                                        if (progressFill) {
+                                            progressFill.classList.remove('indeterminate-bar');
+                                            if (!progressFill.classList.contains('animate-pulse')) {
+                                                progressFill.classList.add('animate-pulse');
+                                            }
+                                            progressFill.style.width = '100%';
+                                        }
+                                        if (progressPercent) progressPercent.innerText = 'DESCARGANDO...';
+                                        if (progressStats) progressStats.innerText = `${loadedMb} MB descargados`;
+                                        if (progressStatus) progressStatus.innerText = 'PROCESANDO DESCARGA...';
+                                    }
+                                    
+                                    if (progressSpeed) progressSpeed.innerText = `Velocidad: ${speedMbPerSec} MB/s`;
+                                    
+                                    lastUpdateTime = now;
+                                    lastLoadedBytes = loadedBytes;
+                                }
+                            }
+                            
+                            // Crear Blob CON el MIME type correcto para preservar
+                            // la estructura del archivo (seekable MP4, audio correcto)
+                            const blob = new Blob(chunks, { type: fileMimeType });
+                            
+                            if (blob.size === 0) {
+                                throw new Error('El archivo descargado pesa 0 bytes. Esto ocurre cuando YouTube bloquea temporalmente este servidor. Por favor, ve a Ajustes (icono de engranaje) y selecciona otra "Instancia Activa" (como Meowing o KittyCat).');
+                            }
+                            
+                            // Ocultar barra al finalizar
+                            if (progressCard) {
+                                if (progressFill) {
+                                    progressFill.classList.remove('indeterminate-bar', 'animate-pulse');
+                                    progressFill.style.width = '100%';
+                                }
+                                if (progressPercent) progressPercent.innerText = '100%';
+                                if (progressStatus) progressStatus.innerText = 'COMPLETADO';
+                                if (progressStats) {
+                                    const finalMb = (blob.size / (1024 * 1024)).toFixed(1);
+                                    progressStats.innerText = `${finalMb} MB descargados — COMPLETADO`;
+                                }
+                                setTimeout(() => {
+                                    progressCard.classList.add('opacity-0');
+                                    setTimeout(() => {
+                                        progressCard.classList.add('hidden');
+                                        progressCard.classList.remove('opacity-0', 'flex');
+                                    }, 300);
+                                }, 2000);
+                            }
+                            
+                            downloadBlobUrl = URL.createObjectURL(blob);
+                            
+                            const tempAnchor = document.createElement('a');
+                            tempAnchor.href = downloadBlobUrl;
+                            tempAnchor.download = filename;
+                            document.body.appendChild(tempAnchor);
+                            tempAnchor.click();
+                            document.body.removeChild(tempAnchor);
+                            
+                            // Liberar el blob URL después de un momento
+                            setTimeout(() => URL.revokeObjectURL(downloadBlobUrl), 60000);
+                            
+                            showToast('ÉXITO', `¡Archivo descargado correctamente!${fallbackMsg}`, 'success');
+                        } catch (err) {
+                            throw err;
+                        }
+                    }
+
+                    // Agregar al historial
+                    const cleanTitle = data.filename 
+                        ? data.filename.replace(/\.[^/.]+$/, "") 
+                        : `Liberado - ${new URL(urlValue).hostname}`;
+
+                    const historyItem = {
+                        id: Date.now().toString(),
+                        title: cleanTitle,
+                        url: urlValue,
+                        downloadUrl: downloadBlobUrl || data.url,
+                        format: selectedFormat,
+                        quality: selectedQuality,
+                        timestamp: Date.now()
+                    };
+
+                    appHistory.unshift(historyItem);
+                    localStorage.setItem('yt_unclogged_history', JSON.stringify(appHistory));
+                    renderHistory();
+
+                    urlInput.value = '';
+                    success = true;
+                    break; // Éxito total: romper bucle
+                } else if (data.status === 'picker') {
+                    throw new Error('Las listas de reproducción completas no son soportadas en descargas directas. Pega un video individual.');
+                } else {
+                    throw new Error('Estado de respuesta desconocido del servidor de Cobalt.');
+                }
+
+            } catch (error) {
+                console.warn(`Intento con ${currentUrl} falló:`, error);
+                lastError = error;
+                
+                // Si es un error crítico irreversible del usuario, abortamos de inmediato sin recorrer respaldos
+                if (error.message && error.message.includes('listas de reproducción')) {
+                    break;
+                }
+            }
+        }
+
+        if (!success) {
+            console.error('Todos los servidores fallaron. Último error:', lastError);
+            // Mostrar modal de alerta o Toast gigante explicando el error de YouTube / 0 Bytes
+            showToast('ERROR AL DESCARGAR', lastError ? lastError.message : 'Error al conectar con los servidores. Cambia de servidor en Ajustes.', 'error');
+        }
+
+        // Reestablecer estados del botón en cualquier caso al terminar
+        urlInput.disabled = false;
+        unclogBtnText.innerText = 'UNCLOG';
+        unclogBtnIcon.innerText = 'download';
+        unclogBtnIcon.classList.remove('animate-spin');
+        
+        // Si el campo de URL está vacío (porque se completó la descarga con éxito y se limpió)
+        if (urlInput.value.trim() === '') {
+            const previewCard = document.getElementById('video-preview-card');
+            if (previewCard) {
+                previewCard.classList.add('opacity-0');
+                setTimeout(() => {
+                    previewCard.classList.add('hidden');
+                    previewCard.classList.remove('flex');
+                }, 300);
+            }
+        }
+        
+        updateButtonState();
+    }
+
+    // Utilidades para validación de URL y Previsualización
+    function checkUrlValidity(value) {
+        let clean = value.trim();
+        if (!clean) return false;
+        if (!/^https?:\/\//i.test(clean)) {
+            clean = 'https://' + clean;
+        }
+        try {
+            const u = new URL(clean);
+            return u.hostname.includes('.') && u.hostname.length > 3;
+        } catch (_) {
+            return false;
+        }
+    }
+
+    function updateButtonState() {
+        const value = urlInput.value.trim();
+        const isValid = checkUrlValidity(value);
+        
+        if (isValid) {
+            unclogBtn.disabled = false;
+            unclogBtn.classList.remove('opacity-40', 'cursor-not-allowed', 'pointer-events-none', 'bg-surface-container-high', 'text-secondary/40');
+            unclogBtn.classList.add('bg-primary-fixed', 'text-on-primary-fixed');
+        } else {
+            unclogBtn.disabled = true;
+            unclogBtn.classList.add('opacity-40', 'cursor-not-allowed', 'pointer-events-none', 'bg-surface-container-high', 'text-secondary/40');
+            unclogBtn.classList.remove('bg-primary-fixed', 'text-on-primary-fixed');
+        }
+    }
+
+    async function handleUrlPreview(value) {
+        const previewCard = document.getElementById('video-preview-card');
+        const previewThumbnail = document.getElementById('preview-thumbnail');
+        const previewPlatform = document.getElementById('preview-platform');
+        const previewAuthor = document.getElementById('preview-author');
+        const previewTitle = document.getElementById('preview-title');
+        const previewDomain = document.getElementById('preview-domain');
+        
+        if (!previewCard) return;
+        
+        const clean = value.trim();
+        if (!checkUrlValidity(clean)) {
+            previewCard.classList.add('opacity-0');
+            setTimeout(() => {
+                previewCard.classList.add('hidden');
+                previewCard.classList.remove('flex');
+            }, 300);
+            return;
+        }
+        
+        let urlWithProtocol = clean;
+        if (!/^https?:\/\//i.test(clean)) {
+            urlWithProtocol = 'https://' + clean;
+        }
+        
+        const url = new URL(urlWithProtocol);
+        const domain = url.hostname.replace('www.', '');
+        
+        const isYoutube = domain.includes('youtube.com') || domain.includes('youtu.be');
+        const isTiktok = domain.includes('tiktok.com');
+        const isInstagram = domain.includes('instagram.com');
+        const isTwitter = domain.includes('twitter.com') || domain.includes('x.com');
+        
+        previewCard.classList.remove('hidden');
+        previewCard.classList.add('flex');
+        setTimeout(() => {
+            previewCard.classList.remove('opacity-0');
+        }, 10);
+        
+        previewDomain.innerText = domain;
+        
+        if (isYoutube) {
+            previewPlatform.innerText = 'YouTube';
+            previewPlatform.className = 'px-2 py-0.5 text-[9px] font-label-bold uppercase bg-red-600 text-white border border-transparent';
+            previewAuthor.innerText = 'Cargando canal...';
+            previewTitle.innerText = 'Cargando detalles del video...';
+            previewThumbnail.src = 'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?q=80&w=200&auto=format&fit=crop';
+            
+            try {
+                const oembedUrl = `https://www.youtube.com/oembed?url=${encodeURIComponent(urlWithProtocol)}&format=json`;
+                const response = await fetch(oembedUrl);
+                if (response.ok) {
+                    const metadata = await response.json();
+                    previewTitle.innerText = metadata.title;
+                    previewAuthor.innerText = metadata.author_name;
+                    previewThumbnail.src = metadata.thumbnail_url;
+                } else {
+                    throw new Error('oEmbed no disponible');
+                }
+            } catch (e) {
+                const ytId = getYoutubeVideoId(urlWithProtocol);
+                if (ytId) {
+                    previewTitle.innerText = 'Video de YouTube';
+                    previewAuthor.innerText = 'Canal de YouTube';
+                    previewThumbnail.src = `https://i3.ytimg.com/vi/${ytId}/mqdefault.jpg`;
+                } else {
+                    previewTitle.innerText = 'Video de YouTube (Enlace de reproducción)';
+                    previewAuthor.innerText = 'YouTube';
+                    previewThumbnail.src = 'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?q=80&w=250&auto=format&fit=crop';
+                }
+            }
+        } else {
+            let platformColor = 'bg-primary-fixed text-on-primary-fixed';
+            let platformName = 'Enlace Web';
+            let thumbUrl = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=250&auto=format&fit=crop';
+            
+            if (isTiktok) {
+                platformName = 'TikTok';
+                platformColor = 'bg-black text-white border border-pink-500';
+                thumbUrl = 'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?q=80&w=250&auto=format&fit=crop';
+            } else if (isInstagram) {
+                platformName = 'Instagram';
+                platformColor = 'bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 text-white';
+                thumbUrl = 'https://images.unsplash.com/photo-1611224885990-ab7363d1f2a9?q=80&w=250&auto=format&fit=crop';
+            } else if (isTwitter) {
+                platformName = 'Twitter / X';
+                platformColor = 'bg-zinc-900 text-white border border-zinc-700';
+                thumbUrl = 'https://images.unsplash.com/photo-1611605698335-8b15d27e03f9?q=80&w=250&auto=format&fit=crop';
+            }
+            
+            previewPlatform.innerText = platformName;
+            previewPlatform.className = `px-2 py-0.5 text-[9px] font-label-bold uppercase ${platformColor}`;
+            previewAuthor.innerText = domain.toUpperCase();
+            previewTitle.innerText = 'CONTENIDO LISTO PARA DESCARGAR';
+            previewThumbnail.src = thumbUrl;
+        }
+    }
+    
+    function getYoutubeVideoId(url) {
+        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+        const match = url.match(regExp);
+        return (match && match[2].length === 11) ? match[2] : null;
+    }
+
+    // Event listener para validar la URL en tiempo real y mostrar portada
+    let previewTimeout;
+    urlInput.addEventListener('input', (e) => {
+        const value = e.target.value.trim();
+        updateButtonState();
+        
+        clearTimeout(previewTimeout);
+        previewTimeout = setTimeout(() => {
+            handleUrlPreview(value);
+        }, 400);
+    });
+
+    // Event Listeners para Modales
+    openSettingsBtn.addEventListener('click', () => {
+        initSettingsInputs();
+        openModal(settingsModal);
+    });
+    closeSettingsBtn.addEventListener('click', () => closeModal(settingsModal));
+    resetSettingsBtn.addEventListener('click', resetSettings);
+    saveSettingsBtn.addEventListener('click', saveSettings);
+
+    openHistoryBtn.addEventListener('click', () => {
+        renderHistory();
+        openModal(historyModal);
+    });
+    closeHistoryBtn.addEventListener('click', () => closeModal(historyModal));
+    closeHistoryBtn2.addEventListener('click', () => closeModal(historyModal));
+    clearHistoryBtn.addEventListener('click', clearHistory);
+
+    // Eventos de los modales de DMCA, Privacy y Terms
+    openDmcaBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(dmcaModal); });
+    closeDmcaBtn.addEventListener('click', () => closeModal(dmcaModal));
+    closeDmcaBtn2.addEventListener('click', () => closeModal(dmcaModal));
+
+    openPrivacyBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(privacyModal); });
+    closePrivacyBtn.addEventListener('click', () => closeModal(privacyModal));
+    closePrivacyBtn2.addEventListener('click', () => closeModal(privacyModal));
+
+    openTermsBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(termsModal); });
+    closeTermsBtn.addEventListener('click', () => closeModal(termsModal));
+    closeTermsBtn2.addEventListener('click', () => closeModal(termsModal));
+
+    // Event listener para el botón de descarga
+    unclogBtn.addEventListener('click', handleDownload);
+    
+    // Permitir presionar Enter en el input de URL
+    urlInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            handleDownload();
+        }
+    });
+
+    closeToastBtn.addEventListener('click', hideToast);
+
+    // Cerrar modales haciendo clic fuera del neo-card
+    [settingsModal, historyModal, dmcaModal, privacyModal, termsModal].forEach(modal => {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModal(modal);
+            }
+        });
+    });
+
+    // Cambiar la visualización de calidades disponibles según el formato
+    document.querySelectorAll('input[name="format"]').forEach(radio => {
+        radio.addEventListener('change', (e) => {
+            const qualityContainer = document.querySelector('input[name="quality"]').closest('.neo-card');
+            if (e.target.value === 'mp3') {
+                // Si es MP3, las opciones de resolución se atenúan y se indica que se usará la calidad de audio configurada en ajustes.
+                qualityContainer.classList.add('opacity-40', 'pointer-events-none');
+                showToast('INFO', 'Formato MP3 seleccionado. La calidad de audio se ajusta en el botón de Configuración superior.', 'info');
+            } else {
+                qualityContainer.classList.remove('opacity-40', 'pointer-events-none');
+            }
+        });
+    });
+
+    // Inicializar inputs al cargar la página
+    initSettingsInputs();
+    renderHistory();
+</script>
+</body></html>

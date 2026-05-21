@@ -1,0 +1,144 @@
+---
+// MainForm component
+---
+<main class="flex-grow flex flex-col items-center justify-center px-margin-mobile md:px-margin-desktop w-full max-w-7xl mx-auto py-8 md:py-section-gap relative z-10">
+	<!-- Hero Section -->
+	<div class="w-full text-center mb-8 md:mb-16 relative">
+		<h1 class="font-display-xl text-[36px] sm:text-[54px] md:text-display-xl leading-[40px] sm:leading-[58px] md:leading-[90px] text-primary uppercase italic tracking-tighter relative inline-block z-10 break-words w-full">
+			PEGA EL LINK.<br>
+			<span class="text-primary-fixed relative">
+				LIBERA EL CONTENIDO.
+				<div class="absolute inset-0 kinetic-lines z-[-1] opacity-30 transform -skew-x-12 translate-x-4 translate-y-2"></div>
+			</span>
+		</h1>
+	</div>
+	
+	<!-- Interactive Core Area -->
+	<div class="w-full max-w-4xl flex flex-col gap-6 md:gap-12 relative z-20">
+		<!-- URL Input Container -->
+		<div class="relative group w-full">
+			<div class="absolute -top-6 left-0 font-label-bold text-label-bold uppercase text-primary-fixed opacity-0 group-focus-within:opacity-100 transition-opacity duration-200 tracking-widest">
+				Objetivo Detectado
+			</div>
+			<div class="relative flex items-center bg-surface-container border-b-2 border-surface-container-highest focus-within:border-primary-fixed transition-colors duration-300">
+				<span class="material-symbols-outlined absolute left-4 text-secondary group-focus-within:text-primary-fixed transition-colors duration-300" style="font-variation-settings: 'FILL' 0;">search</span>
+				<input id="url-input" autocomplete="off" class="w-full bg-transparent border-none font-headline-md text-headline-md text-primary placeholder:text-surface-variant py-6 pl-14 pr-6 focus:ring-0 focus:outline-none" placeholder="PEGAR URL..." type="text">
+			</div>
+		</div>
+
+		<!-- Video Preview Panel -->
+		<div id="video-preview-card" class="w-full bg-surface border-2 border-surface-container-highest p-6 relative overflow-hidden transition-all duration-300 hidden flex-col md:flex-row gap-6 items-center shadow-[-4px_4px_0px_0px_#201f1f]">
+			<div class="absolute inset-0 manga-halftone pointer-events-none opacity-5"></div>
+			<div class="relative w-full md:w-64 aspect-video bg-surface-container-low border border-surface-container-highest overflow-hidden flex-shrink-0 group">
+				<img id="preview-thumbnail" src="" alt="Portada" class="w-full h-full object-cover select-none">
+				<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-end p-2">
+					<span class="text-[9px] font-label-bold uppercase text-primary-fixed">Vista Previa</span>
+				</div>
+			</div>
+			<div class="flex-grow w-full flex flex-col justify-center text-left">
+				<div class="flex items-center gap-2 mb-2">
+					<span id="preview-platform" class="px-2 py-0.5 text-[9px] font-label-bold uppercase bg-primary-fixed text-on-primary-fixed border border-transparent">YOUTUBE</span>
+					<span id="preview-author" class="text-[11px] font-label-bold uppercase text-secondary tracking-widest truncate max-w-[200px]">Canal</span>
+				</div>
+				<h3 id="preview-title" class="font-headline-md text-[18px] md:text-[22px] leading-tight text-primary uppercase italic tracking-tight break-words select-text">Título del Video</h3>
+				<div class="mt-4 flex items-center gap-2 text-[11px] text-secondary/60">
+					<span class="material-symbols-outlined text-[14px]">link</span>
+					<span id="preview-domain" class="truncate max-w-[300px]">youtube.com</span>
+				</div>
+			</div>
+		</div>
+
+		<!-- Options Grid (Asymmetric) -->
+		<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter items-start">
+			<!-- FORMATO Block -->
+			<div class="md:col-span-5 bg-surface neo-card p-6 sm:p-8 relative overflow-hidden group">
+				<div class="absolute inset-0 manga-halftone manga-halftone-card opacity-0 transition-opacity duration-300 pointer-events-none"></div>
+				<h2 class="font-label-bold text-label-bold text-secondary uppercase tracking-widest mb-6">FORMATO</h2>
+				<div class="flex flex-col gap-4">
+					<div class="relative">
+						<input checked="" class="sr-only radio-custom" id="format-mp4" name="format" type="radio" value="mp4">
+						<label class="flex items-center justify-between p-4 border border-surface-container-highest cursor-pointer font-headline-md text-headline-md text-primary hover:bg-surface-container-high transition-colors relative overflow-hidden" for="format-mp4">
+							<span class="">MP4</span>
+							<span class="material-symbols-outlined text-surface-variant group-hover:text-secondary transition-colors" style="font-variation-settings: 'FILL' 0;">movie</span>
+						</label>
+					</div>
+					<div class="relative">
+						<input class="sr-only radio-custom" id="format-mp3" name="format" type="radio" value="mp3">
+						<label class="flex items-center justify-between p-4 border border-surface-container-highest cursor-pointer font-headline-md text-headline-md text-primary hover:bg-surface-container-high transition-colors relative overflow-hidden" for="format-mp3">
+							<span class="">MP3</span>
+							<span class="material-symbols-outlined text-surface-variant group-hover:text-secondary transition-colors" style="font-variation-settings: 'FILL' 0;">audio_file</span>
+						</label>
+					</div>
+				</div>
+			</div>
+			
+			<!-- CALIDAD Block -->
+			<div class="md:col-span-7 bg-surface neo-card p-6 sm:p-8 relative overflow-hidden group md:translate-y-4">
+				<div class="absolute inset-0 manga-halftone manga-halftone-card opacity-0 transition-opacity duration-300 pointer-events-none"></div>
+				<h2 class="font-label-bold text-label-bold text-secondary uppercase tracking-widest mb-6">CALIDAD</h2>
+				<div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+					<div class="relative">
+						<input class="sr-only radio-custom" id="quality-720" name="quality" type="radio" value="720">
+						<label class="flex flex-col items-center justify-center p-4 sm:p-6 border border-surface-container-highest cursor-pointer hover:bg-surface-container-high transition-colors relative overflow-hidden gap-2" for="quality-720">
+							<span class="font-headline-md text-[18px] sm:text-headline-md text-primary">720p</span>
+							<span class="font-label-sm text-[10px] sm:text-label-sm text-secondary uppercase">Estándar</span>
+						</label>
+					</div>
+					<div class="relative">
+						<input checked="" class="sr-only radio-custom" id="quality-1080" name="quality" type="radio" value="1080">
+						<label class="flex flex-col items-center justify-center p-4 sm:p-6 border border-surface-container-highest cursor-pointer hover:bg-surface-container-high transition-colors relative overflow-hidden gap-2" for="quality-1080">
+							<span class="font-headline-md text-[18px] sm:text-headline-md text-primary">1080p</span>
+							<span class="font-label-sm text-[10px] sm:text-label-sm text-secondary uppercase">HD</span>
+						</label>
+					</div>
+					<div class="relative">
+						<input class="sr-only radio-custom" id="quality-4k" name="quality" type="radio" value="2160">
+						<label class="flex flex-col items-center justify-center p-4 sm:p-6 border border-surface-container-highest cursor-pointer hover:bg-surface-container-high transition-colors relative overflow-hidden gap-2" for="quality-4k">
+							<span class="font-headline-md text-[18px] sm:text-headline-md text-primary">4K PRO</span>
+							<span class="font-label-sm text-[10px] sm:text-label-sm text-primary-fixed uppercase">Máxima</span>
+						</label>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Download Progress Panel (Neo-brutalist) -->
+		<div id="download-progress-card" class="bg-surface border-2 border-primary-fixed p-6 relative overflow-hidden transition-all duration-300 hidden flex-col gap-4 shadow-[-4px_4px_0px_0px_#c3f400] w-full">
+			<div class="absolute inset-0 manga-halftone pointer-events-none opacity-5"></div>
+			<div class="flex justify-between items-center select-none">
+				<div class="flex items-center gap-2">
+					<span class="inline-block w-2.5 h-2.5 bg-primary-fixed rounded-full animate-ping"></span>
+					<span id="progress-status" class="font-label-bold text-label-bold uppercase text-primary-fixed tracking-wider">DESCARGANDO...</span>
+				</div>
+				<span id="progress-stats" class="font-label-bold text-[11px] text-secondary uppercase tracking-widest">0.0 MB / 0.0 MB</span>
+			</div>
+			
+			<!-- Outer progress bar track -->
+			<div class="w-full bg-surface-container border border-surface-container-highest h-6 relative overflow-hidden">
+				<!-- Inner progress bar fill -->
+				<div id="progress-bar-fill" class="h-full bg-primary-fixed transition-all duration-100 ease-out" style="width: 0%"></div>
+				<!-- Progress percentage overlay text -->
+				<div id="progress-percent" class="absolute inset-0 flex items-center justify-center font-label-bold text-[11px] text-white mix-blend-difference select-none">0%</div>
+			</div>
+			
+			<div class="flex justify-between items-center text-[10px] text-secondary/60">
+				<span id="progress-speed">Velocidad: -- MB/s</span>
+				<span id="progress-filename" class="truncate max-w-[250px] md:max-w-[400px]">Nombre del archivo...</span>
+			</div>
+		</div>
+
+		<!-- Action Button & Server Badge -->
+		<div class="w-full flex flex-col md:flex-row items-center justify-between gap-4 mt-8 relative">
+			<div class="flex items-center gap-2 bg-surface border border-surface-container-highest px-4 py-2 select-none w-full md:w-auto justify-center" id="server-badge-container">
+				<span class="inline-block w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse mr-1"></span>
+				<span class="font-label-sm text-[10px] text-secondary uppercase tracking-widest">Servidor Activo:</span>
+				<span id="active-server-name" class="font-label-bold text-[10px] text-primary-fixed uppercase tracking-wider">Cargando...</span>
+			</div>
+			
+			<button id="unclog-btn" disabled class="w-full md:w-auto bg-surface-container-high text-secondary/40 font-headline-lg text-[20px] sm:text-headline-lg italic uppercase px-6 py-4 sm:px-12 sm:py-6 flex items-center justify-center gap-4 kinetic-hover transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-surface-tint border border-transparent hover:border-on-primary-fixed opacity-40 cursor-not-allowed pointer-events-none">
+				<span id="unclog-btn-text">UNCLOG</span>
+				<span id="unclog-btn-icon" class="material-symbols-outlined text-[32px] sm:text-[40px] md:text-display-lg" style="font-variation-settings: 'FILL' 1;">download</span>
+			</button>
+		</div>
+	</div>
+</main>
