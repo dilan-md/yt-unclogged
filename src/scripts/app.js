@@ -3,7 +3,7 @@ const DEFAULT_SETTINGS = {
     apiKey: '',
     filenameStyle: 'basic',
     audioBitrate: '128',
-    combineFfmpeg: false
+    combineFfmpeg: true
 };
 
 // Lista de servidores verificados en cobalt.directory (actualizado 2026-05-20)
@@ -351,6 +351,118 @@ function clearHistory() {
     }
 }
 
+// Show / hide the download progress card
+function showProgressCard(filename) {
+    const card = document.getElementById('download-progress-card');
+    if (!card) return;
+    const filenameEl = document.getElementById('progress-filename');
+    if (filenameEl) filenameEl.textContent = filename || 'Preparando archivo...';
+    card.classList.remove('hidden');
+    card.classList.add('flex');
+}
+
+function hideProgressCard() {
+    const card = document.getElementById('download-progress-card');
+    if (!card) return;
+    card.classList.add('hidden');
+    card.classList.remove('flex');
+}
+
+// Reset UI progress bar before starting a new download
+function resetProgressBar(filename) {
+    const progressBarFill = document.getElementById('progress-bar-fill');
+    const progressPercent = document.getElementById('progress-percent');
+    const progressStatus = document.getElementById('progress-status');
+    const progressStats = document.getElementById('progress-stats');
+    const progressSpeed = document.getElementById('progress-speed');
+    const filenameEl = document.getElementById('progress-filename');
+    if (progressBarFill) { progressBarFill.style.width = '0%'; progressBarFill.style.transition = 'width 0.1s ease-out'; }
+    if (progressPercent) progressPercent.textContent = '0%';
+    if (progressStatus) progressStatus.textContent = 'DESCARGANDO...';
+    if (progressStats) progressStats.textContent = '0.00 MB / ? MB';
+    if (progressSpeed) progressSpeed.textContent = 'Velocidad: -- MB/s';
+    if (filenameEl) filenameEl.textContent = filename || 'Preparando archivo...';
+}
+
+// Download with streaming + progress UI (returns a Blob)
+async function downloadWithProgress(downloadUrl, filename) {
+    showProgressCard(filename);
+    resetProgressBar(filename);
+
+    const res = await fetch(downloadUrl);
+    if (!res.ok) throw new Error('Download failed: ' + res.status);
+    const contentLength = res.headers.get('content-length');
+    const total = contentLength ? parseInt(contentLength, 10) : null;
+    const reader = res.body.getReader();
+    const chunks = [];
+    let received = 0;
+    let lastTime = performance.now();
+    let lastReceived = 0;
+
+    const progressBarFill = document.getElementById('progress-bar-fill');
+    const progressPercent = document.getElementById('progress-percent');
+    const progressStats = document.getElementById('progress-stats');
+    const progressSpeed = document.getElementById('progress-speed');
+    const progressStatus = document.getElementById('progress-status');
+
+    while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        chunks.push(value);
+        received += value.length;
+
+        const now = performance.now();
+        const elapsed = (now - lastTime) / 1000;
+        if (elapsed >= 0.3) {
+            const bytesPerSec = (received - lastReceived) / elapsed;
+            const mbps = (bytesPerSec / (1024 * 1024)).toFixed(2);
+            if (progressSpeed) progressSpeed.textContent = `Velocidad: ${mbps} MB/s`;
+            lastTime = now;
+            lastReceived = received;
+        }
+
+        const receivedMB = (received / (1024 * 1024)).toFixed(2);
+        if (total) {
+            const percent = Math.round((received / total) * 100);
+            const totalMB = (total / (1024 * 1024)).toFixed(2);
+            if (progressBarFill) progressBarFill.style.width = percent + '%';
+            if (progressPercent) progressPercent.textContent = percent + '%';
+            if (progressStats) progressStats.textContent = `${receivedMB} MB / ${totalMB} MB`;
+        } else {
+            // Unknown size: just show received MB and animate the bar
+            if (progressBarFill) progressBarFill.style.width = '100%';
+            if (progressBarFill) progressBarFill.style.opacity = '0.6';
+            if (progressPercent) progressPercent.textContent = `${receivedMB} MB`;
+            if (progressStats) progressStats.textContent = `${receivedMB} MB descargados`;
+        }
+    }
+
+    const blob = new Blob(chunks);
+    // Trigger download via temporary link
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+
+    // Mark as completed
+    if (progressBarFill) { progressBarFill.style.width = '100%'; progressBarFill.style.opacity = '1'; }
+    if (progressPercent) progressPercent.textContent = '100%';
+    if (progressStatus) progressStatus.textContent = 'COMPLETADO ✓';
+    if (progressSpeed) progressSpeed.textContent = 'Descarga finalizada';
+
+    // Auto-hide after 4 seconds
+    setTimeout(() => hideProgressCard(), 4000);
+    return blob;
+}
+
+// Helper to generate safe filename
+function safeFilename(title, ext) {
+    const safe = (title || 'video').replace(/[^a-z0-9]/gi, '_').toLowerCase();
+    return `${safe}.${ext}`;
+}
+
 // Manejar lógica de descarga con sistema de redundancia inteligente (fallbacks)
 let lastDownloadTime = 0;
 async function handleDownload() {
@@ -427,6 +539,8 @@ async function handleDownload() {
         if (i > 0) {
             showToast('REINTENTANDO', `Servidor fallido. Probando respaldo (${i}/${candidateUrls.length - 1}): ${new URL(currentUrl).hostname}...`, 'info');
             unclogBtnText.innerText = `RESPALDO ${i}...`;
+            // Pequeño retraso para no bombardear todos los servidores en 1 milisegundo
+            await new Promise(r => setTimeout(r, 600));
         } else {
             unclogBtnText.innerText = 'PROCESANDO...';
         }
@@ -540,7 +654,23 @@ async function handleDownload() {
                 unclogBtnText.innerText = 'DESCARGANDO...';
                 unclogBtnIcon.classList.remove('animate-spin');
                 showToast('DESCARGANDO', `Tu navegador iniciará la descarga en breve${fallbackMsg}...`, 'info');
-                
+
+                // Mostrar barra de progreso simulada para descarga por redirección del navegador
+                const cobaltFilename = data.filename || 'video.mp4';
+                showProgressCard(cobaltFilename);
+                resetProgressBar(cobaltFilename);
+                // Animación de barra indeterminada para cobalt redirect (no tenemos stream)
+                const progressBarFill = document.getElementById('progress-bar-fill');
+                const progressStatus = document.getElementById('progress-status');
+                const progressStats = document.getElementById('progress-stats');
+                const progressSpeed = document.getElementById('progress-speed');
+                if (progressBarFill) {
+                    progressBarFill.style.transition = 'width 8s ease-out';
+                    progressBarFill.style.width = '90%';
+                }
+                if (progressStats) progressStats.textContent = 'Iniciando descarga...';
+                if (progressSpeed) progressSpeed.textContent = 'Velocidad: dependiente del navegador';
+
                 // Descarga a través del proxy para evitar CORS en túneles
                 window.location.assign(`/api/cobalt-download?url=${encodeURIComponent(downloadUrl)}`);
                 
@@ -567,6 +697,10 @@ async function handleDownload() {
                     showToast('ÉXITO', `¡Descarga iniciada! Revisa tu gestor de descargas.${fallbackMsg}`, 'success');
                     urlInput.value = '';
                     urlInput.dispatchEvent(new Event('input'));
+                    // Marcar como completado y ocultar después
+                    if (progressStatus) progressStatus.textContent = 'COMPLETADO ✓';
+                    if (progressBarFill) { progressBarFill.style.width = '100%'; progressBarFill.style.transition = 'width 0.3s'; }
+                    setTimeout(() => hideProgressCard(), 4000);
                 }, 2500);
 
                 success = true;
@@ -582,7 +716,11 @@ async function handleDownload() {
             lastError = error;
 
             // Si es un error crítico irreversible del usuario, abortamos de inmediato sin recorrer respaldos
-            if (error.message && error.message.includes('listas de reproducción')) {
+            if (error.message && (
+                error.message.includes('listas de reproducción') || 
+                error.message.includes('enlace proporcionado no es soportado') ||
+                error.message.includes('roto')
+            )) {
                 break;
             }
         }
@@ -596,21 +734,12 @@ async function handleDownload() {
             const fallbackApiKey = appSettings.apiKey || '79af032004mshfea6d6648d84e89p1edabbjsnecb4ea28e382';
             
             try {
-                // Hacer petición directa a la API para evitar dependencia exclusiva del proxy de desarrollo
-                const rapidRes = await fetch(`https://youtube-media-downloader.p.rapidapi.com/v2/video/details?videoId=${encodeURIComponent(rapidVideoId)}`, {
+                // Siempre usar el proxy local para evitar CORS
+                const rapidRes = await fetch(`/api/rapidapi?videoId=${encodeURIComponent(rapidVideoId)}`, {
                     method: 'GET',
                     headers: {
-                        'x-rapidapi-key': fallbackApiKey,
-                        'x-rapidapi-host': 'youtube-media-downloader.p.rapidapi.com'
+                        'x-rapidapi-key': fallbackApiKey
                     }
-                }).catch(async (e) => {
-                    // Si falla por CORS o red, intentar a través de nuestro proxy local
-                    return await fetch(`/api/rapidapi?videoId=${encodeURIComponent(rapidVideoId)}`, {
-                        method: 'GET',
-                        headers: {
-                            'x-rapidapi-key': fallbackApiKey
-                        }
-                    });
                 });
                 if (!rapidRes.ok) {
                     const err = await rapidRes.json().catch(() => ({}));
@@ -692,8 +821,8 @@ async function handleDownload() {
                             throw new Error('Error al combinar audio y video en el cliente.');
                         }
                     } else {
-                        // Fallback to downloading video only if combine is disabled
-                        finalDownloadUrl = videoUrl;
+                        // Fallback to downloading video only (sin audio) a través del proxy
+                        finalDownloadUrl = `/api/cobalt-download?url=${encodeURIComponent(videoUrl)}`;
                         showToast('INFO', 'Descargando sólo video (sin audio). Habilita "Combinar con FFmpeg" en ajustes para incluir audio.', 'info');
                     }
                 }
@@ -702,19 +831,25 @@ async function handleDownload() {
                     throw new Error('No se pudo determinar el enlace final de descarga de RapidAPI.');
                 }
 
-                showToast('DESCARGANDO', 'Iniciando descarga a través de RapidAPI...', 'info');
+
                 
+                // Iniciar descarga con barra de progreso
+                const fileExt = selectedFormat === 'mp3' ? 'mp3' : 'mp4';
+                const filename = safeFilename(rapidData.title, fileExt);
                 if (finalDownloadUrl.startsWith('blob:')) {
-                    // Descarga local
+                    // If FFmpeg produced a blob, download it directly (no progress needed)
                     const a = document.createElement('a');
                     a.href = finalDownloadUrl;
-                    const safeTitle = (rapidData.title || 'Video').replace(/[^a-z0-9]/gi, '_').toLowerCase();
-                    a.download = `${safeTitle}.mp4`;
+                    a.download = filename;
                     document.body.appendChild(a);
                     a.click();
                     document.body.removeChild(a);
+                } else if (finalDownloadUrl.startsWith('/api/')) {
+                    // Already proxied URL — use streaming download with progress
+                    await downloadWithProgress(finalDownloadUrl, filename);
                 } else {
-                    window.location.assign(`/api/cobalt-download?url=${encodeURIComponent(finalDownloadUrl)}`);
+                    // External URL (googlevideo etc) — route through proxy to avoid CORS
+                    await downloadWithProgress(`/api/cobalt-download?url=${encodeURIComponent(finalDownloadUrl)}`, filename);
                 }
 
                 // Add to history (simplified)
@@ -740,9 +875,9 @@ async function handleDownload() {
         if (!success) {
             console.error('Todos los servidores fallaron. Último error:', lastError);
             // Mejorar el mensaje de error cuando todos fallan por youtube.login
-            let friendlyMsg = 'Error al conectar con los servidores. Cambia de servidor en Ajustes.';
+            let friendlyMsg = 'Error al conectar con todos los servidores. Verifica tu conexión o cambia de servidor en Ajustes.';
             if (lastError && lastError.message) {
-                friendlyMsg = 'YouTube bloqueó los servidores públicos. Intenta nuevamente para usar RapidAPI automáticamente.';
+                friendlyMsg = `Error: ${lastError.message}`;
             }
             showToast('ERROR AL DESCARGAR', friendlyMsg, 'error');
         }
