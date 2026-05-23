@@ -19,7 +19,14 @@ export default async function handler(request) {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 8000);
 
-    const upstream = await fetch(tunnelUrl, { signal: controller.signal });
+    const upstreamHeaders = {
+      'User-Agent': request.headers.get('user-agent') || 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+      'Accept': '*/*',
+      'Origin': 'https://www.youtube.com',
+      'Referer': 'https://www.youtube.com/'
+    };
+
+    const upstream = await fetch(tunnelUrl, { signal: controller.signal, headers: upstreamHeaders });
     clearTimeout(timeout);
 
     if (!upstream.ok) {

@@ -16,7 +16,13 @@ export default async function handler(request) {
   }
 
   try {
-    const upstream = await fetch(tunnelUrl);
+    const upstreamHeaders = {
+      'User-Agent': request.headers.get('user-agent') || 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+      'Accept': '*/*',
+      'Origin': 'https://www.youtube.com',
+      'Referer': 'https://www.youtube.com/'
+    };
+    const upstream = await fetch(tunnelUrl, { headers: upstreamHeaders });
 
     const contentType = upstream.headers.get('content-type') || 'application/octet-stream';
     let contentDisposition = upstream.headers.get('content-disposition') || '';

@@ -3,21 +3,119 @@ const DEFAULT_SETTINGS = {
     apiKey: '',
     filenameStyle: 'basic',
     audioBitrate: '128',
-    combineFfmpeg: true
+    combineFfmpeg: false
 };
 
-// Lista de servidores verificados en cobalt.directory (actualizado 2026-05-20)
-// Ordenados por puntuación y soporte de YouTube en pruebas en vivo
-let FALLBACK_INSTANCES = [
-    'https://grapefruit.clxxped.lol',
+// Lista masiva de servidores conocidos para auto-escaneo
+const ALL_KNOWN_INSTANCES = [
     'https://api.cobalt.blackcat.sweeux.org',
-    'https://fox.kittycat.boo',
     'https://cobaltapi.cjs.nz',
-    'https://api.dl.woof.monster',
-    'https://cobaltapi.kittycat.boo',
-    'https://cobaltapi.squair.xyz',
-    'https://dog.kittycat.boo'
+    'https://cobalt.woof.monster',
+    'https://grapefruit.clxxped.lol',
+    'https://api.meowing.de',
+    'https://api.squair.xyz',
+    'https://cobalt.qwkuns.me',
+    'https://fox.kittycat.boo',
+    'https://cobalt.mgytr.top',
+    'https://co.wuk.sh',
+    'https://cobalt.canine.tools',
+    'https://co.eepy.today',
+    'https://cobalt.sh1mmer.me',
+    'https://cobalt.zorner.me',
+    'https://cobalt.systemless.me',
+    'https://cobalt.lolinade.gay',
+    'https://cobalt.starnw.net',
+    'https://api.cobalt.best'
 ];
+
+let FALLBACK_INSTANCES = [
+    'https://api.cobalt.blackcat.sweeux.org',
+    'https://cobaltapi.cjs.nz',
+    'https://cobalt.woof.monster',
+    'https://grapefruit.clxxped.lol',
+    'https://api.meowing.de'
+];
+
+async function autoUpdateCobaltServers() {
+    try {
+        const lastUpdate = localStorage.getItem('yt_unclogged_servers_last_update');
+        const now = Date.now();
+        const ONE_HOUR = 3600 * 1000;
+        
+        // Si ya hay servidores en caché, cargarlos
+        const cached = localStorage.getItem('yt_unclogged_healthy_servers');
+        if (cached) {
+            try {
+                const parsed = JSON.parse(cached);
+                if (parsed.length > 0) FALLBACK_INSTANCES = parsed;
+            } catch (e) {}
+        }
+
+        // Si se actualizó hace menos de 1 hora, no volver a escanear para no saturar la red
+        if (lastUpdate && (now - parseInt(lastUpdate, 10)) < ONE_HOUR) {
+            return;
+        }
+
+        console.log('🔄 Iniciando escaneo automático de servidores Cobalt...');
+        const healthyServers = [];
+
+        // Ping en paralelo a todos los servidores con timeout de 3 segundos
+        const promises = ALL_KNOWN_INSTANCES.map(async (url) => {
+            try {
+                const startTime = performance.now();
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 3000);
+                
+                const res = await fetch(`/api/server-info?url=${encodeURIComponent(url)}`, { 
+                    method: 'GET',
+                    signal: controller.signal
+                });
+                clearTimeout(timeoutId);
+                
+                if (!res.ok) return;
+                
+                const response = await res.json();
+                if (!response.ok) return; // Server didn't respond or failed
+                
+                const data = response.data;
+                const latency = performance.now() - startTime;
+                
+                // Verificar que soporte youtube y esté funcionando
+                if (data.cobalt && data.cobalt.services && data.cobalt.services.includes('youtube')) {
+                    healthyServers.push({ url, latency });
+                }
+            } catch (e) {
+                // Ignore timeouts/errors
+            }
+        });
+
+        await Promise.all(promises);
+
+        if (healthyServers.length > 0) {
+            // Ordenar de más rápido a más lento
+            healthyServers.sort((a, b) => a.latency - b.latency);
+            const bestUrls = healthyServers.map(s => s.url);
+            
+            console.log(`✅ Escaneo completado: ${bestUrls.length} servidores activos encontrados. Mejor servidor: ${bestUrls[0]} (${Math.round(healthyServers[0].latency)}ms)`);
+            
+            FALLBACK_INSTANCES = bestUrls;
+            localStorage.setItem('yt_unclogged_healthy_servers', JSON.stringify(bestUrls));
+            localStorage.setItem('yt_unclogged_servers_last_update', now.toString());
+            
+            // Si el usuario no tiene una apiKey configurada, usar el mejor servidor
+            let appSettings = JSON.parse(localStorage.getItem('yt_unclogged_settings')) || { ...DEFAULT_SETTINGS };
+            if (!appSettings.apiKey) {
+                appSettings.apiUrl = bestUrls[0];
+                localStorage.setItem('yt_unclogged_settings', JSON.stringify(appSettings));
+            }
+        }
+    } catch (err) {
+        console.error('Error auto-updating servers:', err);
+    }
+}
+
+// Iniciar escaneo en background al cargar
+autoUpdateCobaltServers();
 
 // Instancias conocidas que no funcionan o requieren auth que falla
 const DEAD_INSTANCES = [
@@ -384,8 +482,8 @@ function resetProgressBar(filename) {
     if (filenameEl) filenameEl.textContent = filename || 'Preparando archivo...';
 }
 
-// Download with streaming + progress UI (returns a Blob)
-async function downloadWithProgress(downloadUrl, filename) {
+// Fetch a URL and return a Uint8Array, updating the progress UI
+async function fetchBufferWithProgress(downloadUrl, filename) {
     showProgressCard(filename);
     resetProgressBar(filename);
 
@@ -437,7 +535,26 @@ async function downloadWithProgress(downloadUrl, filename) {
         }
     }
 
-    const blob = new Blob(chunks);
+    const result = new Uint8Array(received);
+    let offset = 0;
+    for (const chunk of chunks) {
+        result.set(chunk, offset);
+        offset += chunk.length;
+    }
+
+    // Mark as completed
+    if (progressBarFill) { progressBarFill.style.width = '100%'; progressBarFill.style.opacity = '1'; }
+    if (progressPercent) progressPercent.textContent = '100%';
+    if (progressStatus) progressStatus.textContent = 'COMPLETADO ✓';
+    if (progressSpeed) progressSpeed.textContent = 'Descarga finalizada';
+
+    return result;
+}
+
+// Download with streaming + progress UI (returns a Blob)
+async function downloadWithProgress(downloadUrl, filename) {
+    const buffer = await fetchBufferWithProgress(downloadUrl, filename);
+    const blob = new Blob([buffer]);
     // Trigger download via temporary link
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
@@ -764,8 +881,20 @@ async function handleDownload() {
                     
                     // Buscar la calidad preferida o la más alta disponible
                     let videoItem = rapidData.videos.items.find(v => v.quality === selectedQuality + 'p');
-                    if (!videoItem) {
-                        videoItem = rapidData.videos.items[0]; // Fallback al primero
+                    
+                    if (!appSettings.combineFfmpeg) {
+                        // Si FFmpeg está desactivado, FORZAR buscar una calidad que ya traiga audio nativo (usualmente 720p o 360p)
+                        // para evitar entregar un video mudo.
+                        if (!videoItem || !videoItem.hasAudio) {
+                            videoItem = rapidData.videos.items.find(v => v.hasAudio) || rapidData.videos.items[0];
+                            if (videoItem && videoItem.hasAudio) {
+                                showToast('INFO', `El video se descargará en ${videoItem.quality} para incluir audio sin usar FFmpeg.`, 'info');
+                            }
+                        }
+                    } else {
+                        if (!videoItem) {
+                            videoItem = rapidData.videos.items[0]; // Fallback al primero
+                        }
                     }
                     
                     videoUrl = videoItem.url;
@@ -787,9 +916,8 @@ async function handleDownload() {
                         unclogBtnText.innerText = 'COMBINANDO...';
                         showToast('PROCESANDO', 'Descargando y combinando audio y video...', 'info');
                         try {
-                            const [{ FFmpeg }, { fetchFile }, { default: coreURL }, { default: wasmURL }] = await Promise.all([
+                            const [{ FFmpeg }, { default: coreURL }, { default: wasmURL }] = await Promise.all([
                                 import('@ffmpeg/ffmpeg'),
-                                import('@ffmpeg/util'),
                                 import('@ffmpeg/core?url'),
                                 import('@ffmpeg/core/wasm?url')
                             ]);
@@ -799,16 +927,24 @@ async function handleDownload() {
                                 console.log('FFmpeg:', message);
                             });
                             
+                            unclogBtnText.innerText = 'CARGANDO FFMPEG...';
                             await ffmpeg.load({
                                 coreURL,
                                 wasmURL
                             });
                             
-                            // Fetch proxy endpoints to bypass CORS for rapidAPI media streams
-                            ffmpeg.writeFile('video.mp4', await fetchFile(`/api/cobalt-download?url=${encodeURIComponent(videoUrl)}`));
-                            ffmpeg.writeFile('audio.m4a', await fetchFile(`/api/cobalt-download?url=${encodeURIComponent(audioUrl)}`));
+                            // Descargar video y audio por separado pero MOSTRANDO BARRA DE PROGRESO
+                            unclogBtnText.innerText = 'BAJANDO VIDEO...';
+                            const videoBuffer = await fetchBufferWithProgress(`/api/cobalt-download?url=${encodeURIComponent(videoUrl)}`, "Descargando pista de Video (1/2)...");
+                            ffmpeg.writeFile('video.mp4', videoBuffer);
                             
-                            unclogBtnText.innerText = 'MERGE...';
+                            unclogBtnText.innerText = 'BAJANDO AUDIO...';
+                            const audioBuffer = await fetchBufferWithProgress(`/api/cobalt-download?url=${encodeURIComponent(audioUrl)}`, "Descargando pista de Audio (2/2)...");
+                            ffmpeg.writeFile('audio.m4a', audioBuffer);
+                            
+                            unclogBtnText.innerText = 'COMBINANDO...';
+                            showProgressCard('Procesando archivo final... por favor espera.');
+                            
                             await ffmpeg.exec(['-i', 'video.mp4', '-i', 'audio.m4a', '-c', 'copy', 'output.mp4']);
                             
                             const data = await ffmpeg.readFile('output.mp4');
@@ -821,9 +957,8 @@ async function handleDownload() {
                             throw new Error('Error al combinar audio y video en el cliente.');
                         }
                     } else {
-                        // Fallback to downloading video only (sin audio) a través del proxy
+                        // Fallback to downloading video only (sin audio) a través del proxy si todo falla
                         finalDownloadUrl = `/api/cobalt-download?url=${encodeURIComponent(videoUrl)}`;
-                        showToast('INFO', 'Descargando sólo video (sin audio). Habilita "Combinar con FFmpeg" en ajustes para incluir audio.', 'info');
                     }
                 }
 

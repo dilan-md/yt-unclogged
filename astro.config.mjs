@@ -30,7 +30,13 @@ function cobaltProxyPlugin() {
         }
 
         try {
-          const upstream = await fetch(tunnelUrl);
+          const upstreamHeaders = {
+            'User-Agent': req.headers['user-agent'] || 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+            'Accept': '*/*',
+            'Origin': 'https://www.youtube.com',
+            'Referer': 'https://www.youtube.com/'
+          };
+          const upstream = await fetch(tunnelUrl, { headers: upstreamHeaders });
           const contentType = upstream.headers.get('content-type') || 'application/octet-stream';
           let contentDisposition = upstream.headers.get('content-disposition') || '';
           const contentLength = upstream.headers.get('content-length');
@@ -89,7 +95,14 @@ function cobaltProxyPlugin() {
           const controller = new AbortController();
           const timeout = setTimeout(() => controller.abort(), 8000);
 
-          const upstream = await fetch(tunnelUrl, { signal: controller.signal });
+          const upstreamHeaders = {
+            'User-Agent': req.headers['user-agent'] || 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+            'Accept': '*/*',
+            'Origin': 'https://www.youtube.com',
+            'Referer': 'https://www.youtube.com/'
+          };
+
+          const upstream = await fetch(tunnelUrl, { signal: controller.signal, headers: upstreamHeaders });
           clearTimeout(timeout);
 
           if (!upstream.ok) {
@@ -123,7 +136,44 @@ function cobaltProxyPlugin() {
         }
       });
 
-      // 3) POST /api/cobalt — forward API requests to cobalt instances
+      // 3) GET /api/server-info — proxy serverInfo checks to avoid browser console CORS/DNS errors
+      server.middlewares.use('/api/server-info', async (req, res) => {
+        if (req.method === 'OPTIONS') {
+          res.writeHead(204, corsHeaders());
+          res.end();
+          return;
+        }
+
+        const urlObj = new URL(req.url, 'http://localhost');
+        const targetUrl = urlObj.searchParams.get('url');
+        if (!targetUrl) {
+          res.writeHead(400, jsonCors());
+          res.end(JSON.stringify({ ok: false }));
+          return;
+        }
+
+        try {
+          const controller = new AbortController();
+          const timeout = setTimeout(() => controller.abort(), 3000);
+          const upstream = await fetch(`${targetUrl}/api/serverInfo`, { signal: controller.signal });
+          clearTimeout(timeout);
+
+          if (!upstream.ok) {
+            res.writeHead(200, jsonCors());
+            res.end(JSON.stringify({ ok: false }));
+            return;
+          }
+
+          const data = await upstream.json();
+          res.writeHead(200, jsonCors());
+          res.end(JSON.stringify({ ok: true, data }));
+        } catch (err) {
+          res.writeHead(200, jsonCors());
+          res.end(JSON.stringify({ ok: false }));
+        }
+      });
+
+      // 4) POST /api/cobalt — forward API requests to cobalt instances
       server.middlewares.use('/api/cobalt', async (req, res) => {
         if (req.method === 'OPTIONS') {
           res.writeHead(204, corsHeaders());
@@ -227,6 +277,9 @@ function jsonCors() {
 // https://astro.build/config
 export default defineConfig({
   vite: {
-    plugins: [tailwindcss(), cobaltProxyPlugin()]
+    plugins: [tailwindcss(), cobaltProxyPlugin()],
+    optimizeDeps: {
+      exclude: ['@ffmpeg/ffmpeg', '@ffmpeg/util']
+    }
   }
 });
