@@ -258,6 +258,136 @@ function cobaltProxyPlugin() {
             res.end(JSON.stringify({ message: err.message }));
           }
         });
+
+      // 6) GET /api/rapidapi-download — proxy RapidAPI call and video stream in ONE execution to prevent IP mismatch 403s
+      server.middlewares.use('/api/rapidapi-download', async (req, res) => {
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+        res.setHeader('Access-Control-Allow-Headers', 'x-rapidapi-key, x-rapidapi-host');
+        if (req.method === 'OPTIONS') {
+          res.writeHead(204);
+          res.end();
+          return;
+        }
+
+        const urlObj = new URL(req.url, 'http://localhost');
+        const videoId = urlObj.searchParams.get('videoId');
+        const quality = urlObj.searchParams.get('quality') || '720';
+
+        if (!videoId) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ message: 'Missing videoId parameter' }));
+          return;
+        }
+
+        const rapidApiKey = req.headers['x-rapidapi-key'] || urlObj.searchParams.get('key');
+        if (!rapidApiKey) {
+          res.writeHead(401, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ message: 'Missing RapidAPI key' }));
+          return;
+        }
+
+        const targetUrl = `https://youtube-media-downloader.p.rapidapi.com/v2/video/details?videoId=${encodeURIComponent(videoId)}`;
+        try {
+          // Step 1: Fetch RapidAPI
+          const apiRes = await fetch(targetUrl, {
+            method: 'GET',
+            headers: {
+              'x-rapidapi-key': rapidApiKey,
+              'x-rapidapi-host': 'youtube-media-downloader.p.rapidapi.com'
+            }
+          });
+
+          if (!apiRes.ok) {
+            res.writeHead(apiRes.status, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ message: 'RapidAPI fetch failed' }));
+            return;
+          }
+          const rapidData = await apiRes.json();
+          
+          const format = urlObj.searchParams.get('format') || 'mp4';
+          let streamUrl = null;
+
+          if (format === 'mp3') {
+            if (!rapidData.audios || !rapidData.audios.items || rapidData.audios.items.length === 0) {
+              res.writeHead(404, { 'Content-Type': 'application/json' });
+              res.end(JSON.stringify({ message: 'No audio streams found' }));
+              return;
+            }
+            streamUrl = rapidData.audios.items[0].url;
+          } else {
+            if (!rapidData.videos || !rapidData.videos.items || rapidData.videos.items.length === 0) {
+               res.writeHead(404, { 'Content-Type': 'application/json' });
+               res.end(JSON.stringify({ message: 'No video streams found' }));
+               return;
+            }
+
+            let videoItem = rapidData.videos.items.find(v => v.quality === quality + 'p' && v.hasAudio);
+            if (!videoItem) {
+                videoItem = rapidData.videos.items.find(v => v.hasAudio) || rapidData.videos.items[0];
+            }
+            
+            streamUrl = videoItem.url;
+          }
+
+          if (!streamUrl) {
+             res.writeHead(404, { 'Content-Type': 'application/json' });
+             res.end(JSON.stringify({ message: 'Invalid stream URL' }));
+             return;
+          }
+
+          // Step 3: Stream the video
+          const upstreamHeaders = {
+            'User-Agent': req.headers['user-agent'] || 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+            'Accept': '*/*',
+            'Origin': 'https://www.youtube.com',
+            'Referer': 'https://www.youtube.com/'
+          };
+
+          const upstream = await fetch(streamUrl, { headers: upstreamHeaders });
+
+          const contentType = upstream.headers.get('content-type') || 'video/mp4';
+          let contentDisposition = upstream.headers.get('content-disposition') || '';
+
+          if (!contentDisposition) {
+            contentDisposition = 'attachment; filename="video.mp4"';
+          } else if (contentDisposition.includes('inline')) {
+            contentDisposition = contentDisposition.replace('inline', 'attachment');
+          } else if (!contentDisposition.includes('attachment')) {
+            contentDisposition = 'attachment; ' + contentDisposition;
+          }
+
+          const responseHeaders = {
+            'Content-Type': contentType,
+            'Content-Disposition': contentDisposition,
+            ...corsHeaders(),
+          };
+
+          const contentLength = upstream.headers.get('content-length');
+          if (contentLength) {
+            responseHeaders['Content-Length'] = contentLength;
+          }
+
+          res.writeHead(upstream.status, responseHeaders);
+
+          const reader = upstream.body.getReader();
+          const pump = async () => {
+            while (true) {
+              const { done, value } = await reader.read();
+              if (done) { res.end(); return; }
+              res.write(value);
+            }
+          };
+          await pump();
+
+        } catch (err) {
+          if (!res.headersSent) {
+            res.writeHead(502, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ message: err.message }));
+          }
+        }
+      });
+
     },
   };
 }

@@ -135,6 +135,8 @@ const DEAD_INSTANCES = [
 
 // Cargar configuraciones del localStorage o usar valores por defecto
 let appSettings = JSON.parse(localStorage.getItem('yt_unclogged_settings')) || { ...DEFAULT_SETTINGS };
+// FORZAR FFmpeg apagado siempre — la combinación en navegador es inestable y lenta
+appSettings.combineFfmpeg = false;
 let appHistory = JSON.parse(localStorage.getItem('yt_unclogged_history')) || [];
 
 // Migrar automáticamente si el usuario tiene configurada una instancia que sabemos que está caída o bloqueada
@@ -320,7 +322,7 @@ function saveSettings() {
 
 // Reestablecer configuraciones
 function resetSettings() {
-    appSettings = { ...DEFAULT_SETTINGS };
+    appSettings = { ...DEFAULT_SETTINGS, combineFfmpeg: false };
     localStorage.setItem('yt_unclogged_settings', JSON.stringify(appSettings));
     initSettingsInputs();
     updateActiveServerBadge();
@@ -851,62 +853,61 @@ async function handleDownload() {
             const fallbackApiKey = appSettings.apiKey || '79af032004mshfea6d6648d84e89p1edabbjsnecb4ea28e382';
             
             try {
-                // Siempre usar el proxy local para evitar CORS
-                const rapidRes = await fetch(`/api/rapidapi?videoId=${encodeURIComponent(rapidVideoId)}`, {
-                    method: 'GET',
-                    headers: {
-                        'x-rapidapi-key': fallbackApiKey
-                    }
-                });
-                if (!rapidRes.ok) {
-                    const err = await rapidRes.json().catch(() => ({}));
-                    throw new Error(err.message || `RapidAPI error ${rapidRes.status}`);
-                }
-                const rapidData = await rapidRes.json();
-                
-                let videoUrl = null;
-                let audioUrl = null;
                 let finalDownloadUrl = null;
                 let requiresMerge = false;
-
-                if (selectedFormat === 'mp3') {
-                    if (!rapidData.audios || !rapidData.audios.items || rapidData.audios.items.length === 0) {
-                        throw new Error('RapidAPI response missing audio URLs');
-                    }
-                    finalDownloadUrl = rapidData.audios.items[0].url;
+                let videoUrl = null;
+                let audioUrl = null;
+                let rapidData = null;
+                let actualQualityStr = selectedQuality + 'p';
+                
+                if (!appSettings.combineFfmpeg) {
+                    // ¡SOLUCIÓN AL 403 DE VERCEL!
+                    // El proxy unificado elige automáticamente la mejor calidad con audio nativo.
+                    // Sin FFmpeg, YouTube solo ofrece audio nativo en 360p/720p.
+                    actualQualityStr = '360p';
+                    finalDownloadUrl = `/api/rapidapi-download?videoId=${encodeURIComponent(rapidVideoId)}&quality=${selectedQuality}&format=${selectedFormat}&key=${fallbackApiKey}`;
+                    showToast('RAPIDAPI', `Descargando vía RapidAPI en ~${actualQualityStr} (máxima calidad con audio nativo).`, 'info');
                 } else {
-                    if (!rapidData.videos || !rapidData.videos.items || rapidData.videos.items.length === 0) {
-                        throw new Error('RapidAPI response missing video URLs');
-                    }
-                    
-                    // Buscar la calidad preferida o la más alta disponible
-                    let videoItem = rapidData.videos.items.find(v => v.quality === selectedQuality + 'p');
-                    
-                    if (!appSettings.combineFfmpeg) {
-                        // Si FFmpeg está desactivado, FORZAR buscar una calidad que ya traiga audio nativo (usualmente 720p o 360p)
-                        // para evitar entregar un video mudo.
-                        if (!videoItem || !videoItem.hasAudio) {
-                            videoItem = rapidData.videos.items.find(v => v.hasAudio) || rapidData.videos.items[0];
-                            if (videoItem && videoItem.hasAudio) {
-                                showToast('INFO', `El video se descargará en ${videoItem.quality} para incluir audio sin usar FFmpeg.`, 'info');
-                            }
+                    // Si FFmpeg ESTÁ activado, entonces sí necesitamos los streams separados y no podemos usar el proxy unificado
+                    // porque FFmpeg necesita procesarlos al mismo tiempo
+                    const rapidRes = await fetch(`/api/rapidapi?videoId=${encodeURIComponent(rapidVideoId)}`, {
+                        method: 'GET',
+                        headers: {
+                            'x-rapidapi-key': fallbackApiKey
                         }
+                    });
+                    if (!rapidRes.ok) {
+                        const err = await rapidRes.json().catch(() => ({}));
+                        throw new Error(err.message || `RapidAPI error ${rapidRes.status}`);
+                    }
+                    rapidData = await rapidRes.json();
+                    
+                    if (selectedFormat === 'mp3') {
+                        if (!rapidData.audios || !rapidData.audios.items || rapidData.audios.items.length === 0) {
+                            throw new Error('RapidAPI response missing audio URLs');
+                        }
+                        finalDownloadUrl = rapidData.audios.items[0].url;
                     } else {
+                        if (!rapidData.videos || !rapidData.videos.items || rapidData.videos.items.length === 0) {
+                            throw new Error('RapidAPI response missing video URLs');
+                        }
+                        
+                        let videoItem = rapidData.videos.items.find(v => v.quality === selectedQuality + 'p');
                         if (!videoItem) {
                             videoItem = rapidData.videos.items[0]; // Fallback al primero
                         }
-                    }
-                    
-                    videoUrl = videoItem.url;
-                    
-                    // Si el video no tiene audio, necesitamos extraer también el audio
-                    if (!videoItem.hasAudio) {
-                        if (rapidData.audios && rapidData.audios.items && rapidData.audios.items.length > 0) {
-                            audioUrl = rapidData.audios.items[0].url;
-                            requiresMerge = true;
+                        
+                        videoUrl = videoItem.url;
+                        
+                        // Si el video no tiene audio, necesitamos extraer también el audio
+                        if (!videoItem.hasAudio) {
+                            if (rapidData.audios && rapidData.audios.items && rapidData.audios.items.length > 0) {
+                                audioUrl = rapidData.audios.items[0].url;
+                                requiresMerge = true;
+                            }
+                        } else {
+                            finalDownloadUrl = videoUrl;
                         }
-                    } else {
-                        finalDownloadUrl = videoUrl;
                     }
                 }
 
@@ -970,7 +971,9 @@ async function handleDownload() {
                 
                 // Iniciar descarga con barra de progreso
                 const fileExt = selectedFormat === 'mp3' ? 'mp3' : 'mp4';
-                const filename = safeFilename(rapidData.title, fileExt);
+                const videoTitle = rapidData && rapidData.title ? rapidData.title : 'YouTube Video';
+                const filename = safeFilename(videoTitle, fileExt);
+                
                 if (finalDownloadUrl.startsWith('blob:')) {
                     // If FFmpeg produced a blob, download it directly (no progress needed)
                     const a = document.createElement('a');
@@ -979,22 +982,31 @@ async function handleDownload() {
                     document.body.appendChild(a);
                     a.click();
                     document.body.removeChild(a);
-                } else if (finalDownloadUrl.startsWith('/api/')) {
-                    // Already proxied URL — use streaming download with progress
-                    await downloadWithProgress(finalDownloadUrl, filename);
                 } else {
-                    // External URL (googlevideo etc) — route through proxy to avoid CORS
-                    await downloadWithProgress(`/api/cobalt-download?url=${encodeURIComponent(finalDownloadUrl)}`, filename);
+                    // VELOCIDAD MÁXIMA: Delegar la descarga al Gestor de Descargas Nativo de Chrome/Edge
+                    // Evitamos usar fetch() en JS porque limita la velocidad y llena la RAM.
+                    window.location.assign(finalDownloadUrl);
+                    
+                    showProgressCard(filename);
+                    resetProgressBar(filename);
+                    const progressBarFill = document.getElementById('progress-bar-fill');
+                    const progressStatus = document.getElementById('progress-status');
+                    if (progressBarFill) {
+                        progressBarFill.style.transition = 'width 2s ease-out';
+                        progressBarFill.style.width = '100%';
+                    }
+                    if (progressStatus) progressStatus.textContent = 'ENVIADO AL NAVEGADOR ✓';
+                    setTimeout(() => hideProgressCard(), 4000);
                 }
 
                 // Add to history (simplified)
                 const historyItem = {
                     id: Date.now().toString(),
-                    title: rapidData.title || 'Video sin título',
+                    title: videoTitle,
                     url: urlValue,
                     downloadUrl: finalDownloadUrl,
                     format: selectedFormat,
-                    quality: selectedQuality,
+                    quality: actualQualityStr.replace('p', ''),
                     timestamp: Date.now()
                 };
                 appHistory.unshift(historyItem);
