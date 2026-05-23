@@ -31,7 +31,8 @@ export default async function handler(request) {
     });
 
     if (!apiRes.ok) {
-      return new Response(JSON.stringify({ message: 'RapidAPI fetch failed' }), { status: apiRes.status, headers: corsHeaders() });
+      const errText = await apiRes.text();
+      return new Response(JSON.stringify({ message: `RapidAPI fetch failed: ${errText}` }), { status: apiRes.status, headers: corsHeaders() });
     }
 
     const rapidData = await apiRes.json();

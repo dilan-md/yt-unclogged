@@ -299,8 +299,9 @@ function cobaltProxyPlugin() {
           });
 
           if (!apiRes.ok) {
+            const errText = await apiRes.text();
             res.writeHead(apiRes.status, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ message: 'RapidAPI fetch failed' }));
+            res.end(JSON.stringify({ message: `RapidAPI fetch failed: ${errText}` }));
             return;
           }
           const rapidData = await apiRes.json();
